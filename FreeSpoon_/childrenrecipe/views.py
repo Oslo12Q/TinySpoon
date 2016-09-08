@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from polls.serializers import UserSerializer, GroupSerializer
+from childrenrecipe.serializers import UserSerializer, GroupSerializer
 from .models import *
 from .serializers import StudentSerializer, ClassesSerializer,ClassesCreateSerializer
 from rest_framework.views import APIView
