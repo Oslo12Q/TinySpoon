@@ -14,35 +14,37 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
             model = Group
             fields = ('url', 'name')
 
+class CategorySerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Category
+		fields = ('url','name')
 
-class StudentSerializer(serializers.HyperlinkedModelSerializer):
+class TagSerializer(serializers.HyperlinkedModelSerializer):
+	category_name = serializers.CharField(source='category.name')
+	class Meta:
+		model = Tag
+		fields = ('name','category_name')
+
+class MaterialSerializer(serializers.HyperlinkedModelSerializer):
+        recipe_title = serializers.CharField(source='recipe.name')
         class Meta:
-            model = Student
-            fields = ('url','name','age','sax')
+                model = Material
+                fields = ('url','id','recipe_title','name','quantity','measureunits')   
 
-class ClassesSerializer(serializers.HyperlinkedModelSerializer):
+class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
+        recipe = serializers.CharField(source='recipe.name')
         class Meta:
-            model = Classes
-            fields = ('student','classname')
+                model = Procedure
+                fields = ('url','id','recipe','seq','describe','image')
 
+class RecipeSerializer(serializers.HyperlinkedModelSerializer):
+	tag = TagSerializer(many=True)
+	material = MaterialSerializer(source='material_set',many=True)
+	procedure = ProcedureSerializer(source='procedure_set',many=True)
+        class Meta:
+                model = Recipe
+                fields = ('url','id','name','user','exihibitpic','introduce','tag',
+			'material','procedure'
+			)
 
-class ClassesCreateSerializer(serializers.Serializer):
-        classname = serializers.CharField(allow_blank=True)
-        student = serializers.ListField(
-                child = serializers.IntegerField()
-        )
-        def create(self,validated_data):
-                pdb.set_status()
-                classname = validated_data.get('classname')
-                student = validated_data.get('studebt')
-                try:
-                        classname = validated_data.get('classname')
-
-                        classes = Classes.objects.create(
-                                classname=classname
-                        )
-                        classes.objects.create(student=student)
-                        return classes
-                except IntegrityError:
-                        raise BadRequestException(detail='Create failed')
 
