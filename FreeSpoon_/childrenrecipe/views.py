@@ -14,9 +14,7 @@ class UserViewSet(viewsets.ModelViewSet):
         queryset = User.objects.all()
         serializer_class = UserSerializer
 
-
 class GroupViewSet(viewsets.ModelViewSet):
-
         queryset = Group.objects.all()
         serializer_class = GroupSerializer
 
@@ -24,7 +22,6 @@ class APIRootView(APIView):
     def get(self, request):
         year = now().year
         data = {
-
             'year-summary-url': reverse('year-summary', args=[year], request=request)
         }
         return Response(data)
@@ -49,4 +46,8 @@ class ProcedureViewSet(viewsets.ModelViewSet):
 class TagViewSet(viewsets.ModelViewSet):
 	queryset = Tag.objects.all()
 	serializer_class = TagSerializer
+
+#class RecommendViewSet(ModelViewSet):
+        #queryset = Recommend.objects.all()
+
 

@@ -26,5 +26,6 @@ admin.site.register(Material)
 admin.site.register(Procedure)
 admin.site.register(Tag)
 admin.site.register(Category)
+admin.site.register(Recommend)
 
 

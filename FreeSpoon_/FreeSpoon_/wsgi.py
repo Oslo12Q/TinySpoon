@@ -1,5 +1,5 @@
 """
-WSGI config for FreeSpoon_ project.
+WSGI config for ChildrenRecipe project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
