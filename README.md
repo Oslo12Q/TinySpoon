@@ -79,13 +79,13 @@
 
 	service mysql restart  
 
-在项目的根目录做数据库迁移  
-
-	python manage.py migrate  
-
 导入TinySpoon的环境变量  
 
 	export DBHOST=0.0.0.0 && export DBPASSWD=123456  
+
+在项目的根目录做数据库迁移  
+
+	python manage.py migrate  
 
 创建管理员用户  
 
