@@ -11,7 +11,7 @@
 
 安装 pip  
 
-	apt-get install python-pip -y  
+	apt-get install python-pip python-dev -y  
 
 安装 django  
 
@@ -46,10 +46,6 @@
 安装 libmysqlclient-dev  
 
 	apt-get install libmysqlclient-dev -y  
-
-安装 python-pip python-dev  
-
-	apt-get install python-pip python-dev -y  
 
 安装 Pillow  
 
