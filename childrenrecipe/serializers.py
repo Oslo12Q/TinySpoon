@@ -46,5 +46,3 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
                 fields = ('url','id','name','user','exihibitpic','introduce','tag',
 			'material','procedure'
 			)
-
-
