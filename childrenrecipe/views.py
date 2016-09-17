@@ -204,18 +204,31 @@ def get_search(request):
 @permission_classes([AllowAny])
 def get_filter_search(request):
 	
-	pass
-
-
-
-
-
-
-
-
-
-
-
-
-
+        data = []
+        tag ={'recipes': []}
+        month = request.GET.get('month',None)
+        limit = request.GET.get('limit',None)
+        recipes = Recipe.objects.filter(tag__name=month)
+        if recipes is None:
+                raise BadRequestException(detail='Recipes not found')
+        else:
+                for recipe in recipes:
+                        recipe_id = recipe.id
+                        recipe_create_time = recipe.create_time
+                        recipe_name = recipe.name
+                        recipe_user = recipe.user
+                        recipe_exihibitpic = recipe.exihibitpic
+                        recipe_introduce = recipe.introduce
+                        tag_name=recipe.tag.values()[0]
+                        tag['recipes'].append({
+                                'id':recipe_id,
+                                'create_time':recipe_create_time,
+                                'recipe':recipe_name,
+                                'user':recipe_user,
+                                'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
+                                'introduce':recipe_introduce,
+                                'tag':tag_name
+                        })
+                data.append(tag)
+                return Response(data,status=status.HTTP_200_OK)
 
