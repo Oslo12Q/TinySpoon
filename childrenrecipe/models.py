@@ -8,7 +8,7 @@ class Recipe(models.Model):
 	create_time = models.DateTimeField(auto_now=True)
 	name = models.CharField(max_length=200)
 	user = models.CharField(max_length=40, blank=True)
-	exihibitpic = models.ImageField(upload_to='images/exhibited_picture/%Y/%m/%d', blank=False)
+	exihibitpic = models.ImageField(upload_to='exhibited_picture/%Y/%m/%d', blank=False)
 	introduce = models.TextField(blank=False)
 	tag = models.ManyToManyField('Tag')
 	def __unicode__(self):
@@ -26,7 +26,7 @@ class Procedure(models.Model):
 	recipe = models.ForeignKey('Recipe')
 	seq = models.IntegerField()
 	describe = models.TextField(blank=False)
-	image = models.ImageField(upload_to='images/exhibited_picture/%Y/%m/%d', blank=False)
+	image = models.ImageField(upload_to='exhibited_picture/%Y/%m/%d', blank=False)
 	create_time = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
 		return self.recipe.name
@@ -46,7 +46,7 @@ class Category(models.Model):
 class Recommend(models.Model):
 	create_time = models.DateTimeField(auto_now=True)
 	recipe = models.ForeignKey('Recipe')
-	image = models.ImageField(upload_to='images/exhibited_picture/%Y/%m/%d', blank=False)
+	image = models.ImageField(upload_to='exhibited_picture/%Y/%m/%d', blank=False)
 	pubdate = models.DateTimeField()
 	def __unicode__(self):
 		return self.recipe.name

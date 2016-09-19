@@ -46,4 +46,10 @@ class RecipeSerializer(serializers.ModelSerializer):
         class Meta:
                 model = Recipe
                 fields = ('url','id','name','user','exihibitpic','introduce','tag',
+<<<<<<< HEAD
+			'material','procedure'
+			)
+	
+=======
 			'material','procedure')
+>>>>>>> a5708253a902ed3a374ea7402cd98bd9d0d2d3f2

@@ -17,11 +17,17 @@ router.register(r'tag',views.TagViewSet)
 urlpatterns = [	
     url(r'^', include(router.urls)),
 	url(r'^tags$', views.tags, name='tags'),
+<<<<<<< HEAD
+	url(r'^recipe$',views.recipe, name = 'recipe'),
+	url(r'^tagshow$',views.tagshow,name = 'tagshow'),
+	
+=======
 	url(r'^recipes$', views.recipes ),
 	url(r'^recipesshow',views.recipesshow , name ='recipesshow'),	
 	url(r'^tagshow$', views.tagshow, name = 'tagshow'),
 	url(r'^search$',views.get_search,name = 'search'),
 	url(r'^filters$',views.get_filter_search, name = 'filters'),
+>>>>>>> a5708253a902ed3a374ea7402cd98bd9d0d2d3f2
 #	url(r'^static/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.STATIC_ROOT },name='static'),
 
 ]
