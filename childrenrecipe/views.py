@@ -22,10 +22,22 @@ from rest_framework.decorators import (
 	permission_classes,
 	parser_classes,
 )
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponse
+from rest_framework.renderers import JSONRenderer
 #from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 
 # Create your views here.
+class JSONResponse(HttpResponse):
+        """
+        An HttpResponse that renders its content into JSON.
+        """
+	def __init__(self, data, **kwargs):
+        	content = JSONRenderer().render(data)
+        	kwargs['content_type'] = 'application/json'
+        	super(JSONResponse, self).__init__(content, **kwargs)
+
 
 class UserViewSet(viewsets.ModelViewSet):
         queryset = User.objects.all()
@@ -92,68 +104,57 @@ def tags(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def recipes(request):
-	
-	data = []
-	tag ={'recipes': []}
-	month = request.GET.get('month',None)
-	limit = request.GET.get('limit',None)
-	recipes = Recipe.objects.filter(tag__name=month)
-	if recipes is None:
-		raise BadRequestException(detail='Recipes not found')
-	else:
-		for recipe in recipes:
-			recipe_id = recipe.id
-			recipe_create_time = recipe.create_time
-			recipe_name = recipe.name
-			recipe_user = recipe.user
-			recipe_exihibitpic = recipe.exihibitpic
-			recipe_introduce = recipe.introduce
-			tag_name=recipe.tag.values()[0]
-			tag['recipes'].append({
-				'id':recipe_id,
-				'create_time':recipe_create_time,
-				'recipe':recipe_name,
-				'user':recipe_user,
-				'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
-				'introduce':recipe_introduce,
-				'tag':tag_name
-			})
-		data.append(tag)
-		return Response(data,status=status.HTTP_200_OK)
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def recipesshow(request): 
+def recipe(request):
+        import pdb
+        pdb.set_trace()
         data = []
-        tag ={'recipes': []}
+        tags = {}
         recipes = Recipe.objects.all()
+	recipes = Paginator(recipes,10)
+	page = request.GET.get('page',1)
+	try:
+		recipes = recipes.page(page)
+	except PageNotAnInteger:
+		recipes = recipes.page(1)
+	except EmptyPage:
+		recipes = recipes.page(recipes.num_pages)
         for recipe in recipes:
                 recipe_id = recipe.id
                 recipe_create_time = recipe.create_time
                 recipe_name = recipe.name
                 recipe_user = recipe.user
                 recipe_exihibitpic = recipe.exihibitpic
-                recipe_introduce = recipe.introduce
-                tag_name=recipe.tag.values()[0]
+                recipe_introduce = recipe.introduce	
+		tag_name = recipe.tag.filter(category__is_tag= 1 )[0].name
+		pdb.set_trace()
+
+                tag = None
+                if tag_name in tags:
+                        tag = tags[tag_name]
+                else:
+                        tag = {'tag':tag_name, 'recipes':[]}
+                        tags[tag_name] = tag
+                        data.append(tag)
                 tag['recipes'].append({
                         'id':recipe_id,
                         'create_time':recipe_create_time,
                         'recipe':recipe_name,
                         'user':recipe_user,
-                        'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
-                        'introduce':recipe_introduce,
-			'tag':tag_name
+                        'exihibitpic':recipe_exihibitpic.url,
+                        'introduce':recipe_introduce,	
+			'tag':recipe.tag.filter(category__is_tag= 1 )[0].name
                 })
-	data.append(tag)
-        return Response(data,status=status.HTTP_200_OK)
+	pdb.set_trace()
+
+        return Response(data, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def tagshow(request):
 	data = []
         categorys = {}
-        tags = Tag.objects.filter(category_id='1')
+        tags = Tag.objects.filter(category__is_tag= 1)
         for tag in tags:
                 tag_id = tag.id
                 tag_name = tag.name
@@ -170,65 +171,4 @@ def tagshow(request):
                         'tag': tag_name
                 })
         return Response(data, status=status.HTTP_200_OK)
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def get_search(request):	
-	recipe_name = request.GET.get('recipe_name',None)
-	recipes = Recipe.objects.filter(name = recipe_name)
-	data = []
-        tag ={'recipes': []}
-        for recipe in recipes:
-                recipe_id = recipe.id
-                recipe_create_time = recipe.create_time
-                recipe_name = recipe.name
-                recipe_user = recipe.user
-                recipe_exihibitpic = recipe.exihibitpic
-                recipe_introduce = recipe.introduce
-                tag_name=recipe.tag.values()[0]
-                tag['recipes'].append({
-                        'id':recipe_id,
-                        'create_time':recipe_create_time,
-                        'recipe':recipe_name,
-                        'user':recipe_user,
-                        'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
-                        'introduce':recipe_introduce,
-                        'tag':tag_name
-                })
-        data.append(tag)
-        return Response(data,status=status.HTTP_200_OK)
-
-
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def get_filter_search(request):
-	
-        data = []
-        tag ={'recipes': []}
-        month = request.GET.get('month',None)
-        limit = request.GET.get('limit',None)
-        recipes = Recipe.objects.filter(tag__name=month)
-        if recipes is None:
-                raise BadRequestException(detail='Recipes not found')
-        else:
-                for recipe in recipes:
-                        recipe_id = recipe.id
-                        recipe_create_time = recipe.create_time
-                        recipe_name = recipe.name
-                        recipe_user = recipe.user
-                        recipe_exihibitpic = recipe.exihibitpic
-                        recipe_introduce = recipe.introduce
-                        tag_name=recipe.tag.values()[0]
-                        tag['recipes'].append({
-                                'id':recipe_id,
-                                'create_time':recipe_create_time,
-                                'recipe':recipe_name,
-                                'user':recipe_user,
-                                'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
-                                'introduce':recipe_introduce,
-                                'tag':tag_name
-                        })
-                data.append(tag)
-                return Response(data,status=status.HTTP_200_OK)
 

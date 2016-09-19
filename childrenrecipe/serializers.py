@@ -25,24 +25,27 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
 		model = Tag
 		fields = ('name','category_name')
 
-class MaterialSerializer(serializers.HyperlinkedModelSerializer):
+class MaterialSerializer(serializers.ModelSerializer):
         recipe_title = serializers.CharField(source='recipe.name')
         class Meta:
                 model = Material
                 fields = ('url','id','recipe_title','name','quantity','measureunits')   
 
-class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
+class ProcedureSerializer(serializers.ModelSerializer):
         recipe = serializers.CharField(source='recipe.name')
         class Meta:
                 model = Procedure
                 fields = ('url','id','recipe','seq','describe','image')
 
-class RecipeSerializer(serializers.HyperlinkedModelSerializer):
+class RecipeSerializer(serializers.ModelSerializer):
 	tag = TagSerializer(many=True)
 	material = MaterialSerializer(source='material_set',many=True)
 	procedure = ProcedureSerializer(source='procedure_set',many=True)
+
+	
         class Meta:
                 model = Recipe
                 fields = ('url','id','name','user','exihibitpic','introduce','tag',
 			'material','procedure'
 			)
+	

@@ -39,6 +39,7 @@ class Tag(models.Model):
 
 class Category(models.Model):
 	name = models.CharField(max_length=100)
+	is_tag =models.IntegerField(blank=False)
 	def __unicode__(self):
 		return self.name
 
