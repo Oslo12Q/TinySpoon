@@ -11,11 +11,11 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STATIC_ROOT = os.path.join(os.path.dirname(__file__),'static').replace('\\','/')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -47,7 +47,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
 }
-
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -81,7 +80,8 @@ WSGI_APPLICATION = 'TinySpoon.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-TABASES = {
+
+DATABASES = {
         'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'TinySpoon',
@@ -91,8 +91,6 @@ TABASES = {
         'PORT': '3306',
     }
 }
-
-
 
 
 # Password validation
@@ -132,12 +130,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR,  'static'), 
+    os.path.join(BASE_DIR,  'static'),
 )
-
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
 MEDIA_URL = '/images/'
+                                  
