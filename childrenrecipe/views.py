@@ -103,6 +103,8 @@ def recipes(request):
 		raise BadRequestException(detail='Recipes not found')
 	else:
 		for recipe in recipes:
+			import pprint
+			pprint.pprint(recipe_exihibitpic)
 			recipe_id = recipe.id
 			recipe_create_time = recipe.create_time
 			recipe_name = recipe.name
@@ -115,7 +117,8 @@ def recipes(request):
 				'create_time':recipe_create_time,
 				'recipe':recipe_name,
 				'user':recipe_user,
-				'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
+                'exihibitpic': recipe_exihibitpic.url,
+				#'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
 				'introduce':recipe_introduce,
 				'tag':tag_name
 			})

@@ -86,9 +86,9 @@ DATABASES = {
         'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'TinySpoon',
-	'USER': 'root',
-    	'PASSWORD': os.getenv('DBPASSWD'),
-    	'HOST': os.getenv('DBHOST'),
+	    'USER': 'root',
+    	'PASSWORD': 'mysql',
+    	'HOST': 'localhost',
     	'PORT': '3306',
     }
 }
@@ -135,3 +135,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR,  'static'), 
 )
+
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
+MEDIA_URL = '/images/'

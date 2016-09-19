@@ -8,7 +8,7 @@ class Recipe(models.Model):
 	create_time = models.DateTimeField(auto_now=True)
 	name = models.CharField(max_length=200)
 	user = models.CharField(max_length=40, blank=True)
-	exihibitpic = models.ImageField(upload_to='images/exhibited_picture/%Y/%m/%d', blank=False)
+	exihibitpic = models.ImageField(upload_to='exhibited_picture/%Y/%m/%d', blank=False)
 	introduce = models.TextField(blank=False)
 	tag = models.ManyToManyField('Tag')
 	def __unicode__(self):

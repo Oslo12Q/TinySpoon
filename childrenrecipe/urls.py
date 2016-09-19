@@ -15,7 +15,7 @@ router.register(r'procedure',views.ProcedureViewSet)
 router.register(r'recipes',views.RecipeViewSet)
 router.register(r'tag',views.TagViewSet)
 urlpatterns = [	
-        url(r'^', include(router.urls)),
+    url(r'^', include(router.urls)),
 	url(r'^tags$', views.tags, name='tags'),
 	url(r'^recipess$', views.recipes ,name = 'recipes'),
 	url(r'^recipesshow',views.recipesshow , name ='recipesshow'),	
