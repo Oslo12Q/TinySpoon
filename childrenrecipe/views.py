@@ -1,9 +1,12 @@
 #!/usr/bin/env Python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
+import datetime
+from django.utils.timezone import UTC
 from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from childrenrecipe.serializers import *
@@ -73,22 +76,44 @@ def tags(request):
 	data = []
 	categorys = {}
 	tags = Tag.objects.all()
-	for tag in tags:
-		tag_id = tag.id
-		tag_name = tag.name
-		category_name = tag.category.name
-		categroy = None
-		if category_name in categorys:
-			category = categorys[category_name]
-		else:
-			category = {'category': category_name, 'tags': []}
-			categorys[category_name] = category
-			data.append(category)
-		category['tags'].append({
-			'id': tag_id,
-			'tag': tag_name
-		})
-	return Response(data, status=status.HTTP_200_OK)
+        if tags:
+                for tag in tags:
+                        tag_id = tag.id
+                        tag_name = tag.name
+                        category_name = tag.category.name
+                        category_seq = tag.category.seq
+                        categroy = None
+                        if category_name in categorys:
+                                category = categorys[category_name]
+                        else:
+                                category = {'id': category_seq, 'category': category_name, 'tags': []}
+                                categorys[category_name] = category
+                                data.append(category)
+                        category['tags'].append({
+                                'id': tag_id,
+                                'tag': tag_name
+                        })
+
+                #import pdb
+                #pdb.set_trace()
+
+                if len(data)>1:
+                        for item in range(0, len(data)-1):
+                                #category_seq = data[item].get('id')
+                                min = item
+                                for item2 in range(item+1, len(data)):
+                                        if data[item2].get('id') < data[min].get('id'):
+                                                min = item2
+                                tmp = data[item]
+                                data[item] = data[min]
+                                data[min] = tmp
+                        return Response(data, status=status.HTTP_200_OK)
+                else:
+                        pass
+
+        else:
+                return Response(data, status=status.HTTP_404_NOT_FOUND)
+	#return Response(data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -232,3 +257,57 @@ def get_filter_search(request):
                 data.append(tag)
                 return Response(data,status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def recommend(request):
+        #import pdb 
+        #pdb.set_trace()
+
+        now = datetime.datetime.now(tz=UTC())
+        if Recommend.objects.all().filter(pubdate__lte=now): 
+                recommend = Recommend.objects.all().filter(pubdate__lte=now).order_by('-pubdate').first()
+        
+        #now = datetime.datetime.now()
+        #pubdates = recommends.get('pub_date')
+        #timedelays = []
+        
+        #for pubdate in pubdates:
+                #timedelay = now - pubdate
+                #if timedelay > 0:
+                        #timedelays.append(timedelay)
+
+  
+        #for item in range(0, len(timedelays)):
+                #min = item
+                #for item2 in range(item+1, len(timedelays)):
+                        #if timedelays[item2] < timedelays[min]:
+                                #min = item2
+                #timedelays[item], timedelays[min] = timedelays[min], timedelays[item]
+                #print timedelays[item] 
+        #recommend = json.loads(datacontent)
+
+        #recommend_image = recommend.image
+                recommend_pubdate = recommend.pubdate
+                recommend_recipe_id = recommend.recipe.id
+                recommend_recipe_name = recommend.recipe.name
+                recommend_recipe_user = recommend.recipe.user
+                recommend_recipe_introduce = recommend.recipe.introduce
+
+                recommend = {'recommend_recipe_name': 'Today\'s Specials', 
+                        'pubdate': recommend_pubdate, 'recipe': {}}
+                #recommend = {'recommend_recipe_name': '', 'image': recommend_image, 
+                        #'pubdate': recommend_pubdate, 'recipe': {}}
+                recommend['recipe'] = {
+                        'id': recommend_recipe_id,
+                        'name': recommend_recipe_name,
+                        'user': recommend_recipe_user,
+                        'introduce': recommend_recipe_introduce
+                }
+
+                return Response(recommend, status=status.HTTP_200_OK)
+        
+        else:
+                recommend = {}
+                return Response(recommend, status=status.HTTP_404_NOT_FOUND)
+
+        

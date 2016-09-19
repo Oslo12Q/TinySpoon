@@ -21,5 +21,5 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^api/', include('childrenrecipe.urls')),
+    url(r'^api/childrenrecipe/', include('childrenrecipe.urls')),
 ]

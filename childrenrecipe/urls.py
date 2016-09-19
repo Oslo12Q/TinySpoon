@@ -7,21 +7,24 @@ from django.conf.urls.static import static
 
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
-router.register(r'category',views.CategoryViewSet)
-router.register(r'material',views.MaterialViewSet)
-router.register(r'procedure',views.ProcedureViewSet)
-router.register(r'recipes',views.RecipeViewSet)
-router.register(r'tag',views.TagViewSet)
+#router.register(r'users', views.UserViewSet)
+#router.register(r'groups', views.GroupViewSet)
+#router.register(r'category',views.CategoryViewSet)
+#router.register(r'material',views.MaterialViewSet)
+#router.register(r'procedure',views.ProcedureViewSet)
+#router.register(r'recipes',views.RecipeViewSet)
+#router.register(r'tag',views.TagViewSet)
 urlpatterns = [	
         url(r'^', include(router.urls)),
-	url(r'^tags$', views.tags, name='tags'),
-	url(r'^recipess$', views.recipes ,name = 'recipes'),
-	url(r'^recipesshow',views.recipesshow , name ='recipesshow'),	
-	url(r'^tagshow$', views.tagshow, name = 'tagshow'),
-	url(r'^search$',views.get_search,name = 'search'),
-	url(r'^filters$',views.get_filter_search, name = 'filters'),
+	#url(r'^admin', include(admin.site.urls)),
+
+	url(r'^tags/$', views.tags, name='tags'),
+	url(r'^recipes/$', views.recipes,name='recipes'),
+	url(r'^recipesshow/$',views.recipesshow , name='recipesshow'),	
+	url(r'^tagshow/$', views.tagshow, name='tagshow'),
+	url(r'^search/$', views.get_search, name='search'),
+	url(r'^filters/$', views.get_filter_search, name='filters'),
+	url(r'^recommend/$', views.recommend, name='recommend')
 #	url(r'^static/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.STATIC_ROOT },name='static'),
 
 ]

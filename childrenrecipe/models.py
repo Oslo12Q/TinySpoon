@@ -26,7 +26,7 @@ class Procedure(models.Model):
 	recipe = models.ForeignKey('Recipe')
 	seq = models.IntegerField()
 	describe = models.TextField(blank=False)
-	image = models.ImageField(upload_to='images/exhibited_picture/%Y/%m/%d', blank=False)
+	image = models.ImageField(upload_to='images/procedure_picture/%Y/%m/%d', blank=True)
 	create_time = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
 		return self.recipe.name
@@ -39,13 +39,14 @@ class Tag(models.Model):
 
 class Category(models.Model):
 	name = models.CharField(max_length=100)
+	seq = models.IntegerField()
 	def __unicode__(self):
 		return self.name
 
 class Recommend(models.Model):
 	create_time = models.DateTimeField(auto_now=True)
 	recipe = models.ForeignKey('Recipe')
-	image = models.ImageField(upload_to='images/exhibited_picture/%Y/%m/%d', blank=False)
+	image = models.ImageField(upload_to='images/recommend_picture/%Y/%m/%d', blank=False)
 	pubdate = models.DateTimeField()
 	def __unicode__(self):
 		return self.recipe.name
