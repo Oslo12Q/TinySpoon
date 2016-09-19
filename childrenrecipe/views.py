@@ -22,6 +22,10 @@ from rest_framework.decorators import (
 	permission_classes,
 	parser_classes,
 )
+
+
+import logging
+logger = logging.getLogger('recipe.views')
 #from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 
@@ -90,40 +94,72 @@ def tags(request):
 		})
 	return Response(data, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
-@permission_classes([AllowAny])
+
 def recipes(request):
+    recipes = Recipe.objects.filter(tag__name=month)
+    data = [ ]
+    for recipe in recipes:
+        tag_list = [ ]
+        material_list = [ ]
+        procedure_list = [ ]
+        items = {
+                'tag': recipe.tag,
+                'recipes': {
+                    'id': recipe.id,
+                    'name': recipe.name,
+                    'user': recipe.user,
+                    'exihibitpic': recipe.exihibitpic,
+                    'introduce': recipe.introduce,
+                    'tag': tag_list,
+                    'material': material_list,
+                    'procedure': procedure_list,
+                    },
+                }
+        data.append(items)
+    context =  {
+          'status': status.HTTP_200_OK,
+          'data': data,
+          }
+    return Response(context, status=context.get('status'))
+
+
+    
+
 	
-	data = []
-	tag ={'recipes': []}
-	month = request.GET.get('month',None)
-	limit = request.GET.get('limit',None)
-	recipes = Recipe.objects.filter(tag__name=month)
-	if recipes is None:
-		raise BadRequestException(detail='Recipes not found')
-	else:
-		for recipe in recipes:
-			import pprint
-			pprint.pprint(recipe_exihibitpic)
-			recipe_id = recipe.id
-			recipe_create_time = recipe.create_time
-			recipe_name = recipe.name
-			recipe_user = recipe.user
-			recipe_exihibitpic = recipe.exihibitpic
-			recipe_introduce = recipe.introduce
-			tag_name=recipe.tag.values()[0]
-			tag['recipes'].append({
-				'id':recipe_id,
-				'create_time':recipe_create_time,
-				'recipe':recipe_name,
-				'user':recipe_user,
-                'exihibitpic': recipe_exihibitpic.url,
-				#'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
-				'introduce':recipe_introduce,
-				'tag':tag_name
-			})
-		data.append(tag)
-		return Response(data,status=status.HTTP_200_OK)
+#@api_view(['GET'])
+#@permission_classes([AllowAny])
+#def recipes(request):
+#	
+#	data = []
+#	tag ={'recipes': []}
+#	month = request.GET.get('month',None)
+#	limit = request.GET.get('limit',None)
+#	recipes = Recipe.objects.filter(tag__name=month)
+#	if recipes is None:
+#		raise BadRequestException(detail='Recipes not found')
+#	else:
+#		for recipe in recipes:
+#			import pprint
+#			pprint.pprint(recipe_exihibitpic)
+#			recipe_id = recipe.id
+#			recipe_create_time = recipe.create_time
+#			recipe_name = recipe.name
+#			recipe_user = recipe.user
+#			recipe_exihibitpic = recipe.exihibitpic
+#			recipe_introduce = recipe.introduce
+#			tag_name=recipe.tag.values()[0]
+#			tag['recipes'].append({
+#				'id':recipe_id,
+#				'create_time':recipe_create_time,
+#				'recipe':recipe_name,
+#				'user':recipe_user,
+#                'exihibitpic': recipe_exihibitpic.url,
+#				#'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
+#				'introduce':recipe_introduce,
+#				'tag':tag_name
+#			})
+#		data.append(tag)
+#		return Response(data,status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -144,7 +180,8 @@ def recipesshow(request):
                         'create_time':recipe_create_time,
                         'recipe':recipe_name,
                         'user':recipe_user,
-                        'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
+                        'exihibitpic': recipe_exihibitpic.url,
+				        #'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
                         'introduce':recipe_introduce,
 			'tag':tag_name
                 })
@@ -194,7 +231,8 @@ def get_search(request):
                         'create_time':recipe_create_time,
                         'recipe':recipe_name,
                         'user':recipe_user,
-                        'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
+                        'exihibitpic': recipe_exihibitpic.url,
+				        #'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
                         'introduce':recipe_introduce,
                         'tag':tag_name
                 })
@@ -228,7 +266,8 @@ def get_filter_search(request):
                                 'create_time':recipe_create_time,
                                 'recipe':recipe_name,
                                 'user':recipe_user,
-                                'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
+                                'exihibitpic': recipe_exihibitpic.url,
+				                #'exihibitpic':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+recipe_exihibitpic.url,
                                 'introduce':recipe_introduce,
                                 'tag':tag_name
                         })

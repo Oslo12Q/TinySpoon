@@ -17,7 +17,7 @@ router.register(r'tag',views.TagViewSet)
 urlpatterns = [	
     url(r'^', include(router.urls)),
 	url(r'^tags$', views.tags, name='tags'),
-	url(r'^recipess$', views.recipes ,name = 'recipes'),
+	url(r'^recipes$', views.recipes ),
 	url(r'^recipesshow',views.recipesshow , name ='recipesshow'),	
 	url(r'^tagshow$', views.tagshow, name = 'tagshow'),
 	url(r'^search$',views.get_search,name = 'search'),

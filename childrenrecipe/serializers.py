@@ -44,5 +44,4 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
         class Meta:
                 model = Recipe
                 fields = ('url','id','name','user','exihibitpic','introduce','tag',
-			'material','procedure'
-			)
+			'material','procedure')
