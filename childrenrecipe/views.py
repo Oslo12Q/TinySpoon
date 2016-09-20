@@ -22,18 +22,10 @@ from rest_framework.decorators import (
 	permission_classes,
 	parser_classes,
 )
-<<<<<<< HEAD
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from rest_framework.renderers import JSONRenderer
-=======
-
-
-import logging
-logger = logging.getLogger('recipe.views')
->>>>>>> a5708253a902ed3a374ea7402cd98bd9d0d2d3f2
-#from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-
 
 # Create your views here.
 class JSONResponse(HttpResponse):
@@ -109,42 +101,6 @@ def tags(request):
 		})
 	return Response(data, status=status.HTTP_200_OK)
 
-#<<<<<<< HEAD
-#@api_view(['GET'])
-#@permission_classes([AllowAny])
-#def recipe(request):
-#        import pdb
-#        pdb.set_trace()
-#=======
-
-#def recipes(request):
-#    recipes = Recipe.objects.filter(tag__name=month)
-#    data = [ ]
-#    for recipe in recipes:
-#        tag_list = [ ]
-#        material_list = [ ]
-#        procedure_list = [ ]
-#        items = {
-#                'tag': recipe.tag,
-#                'recipes': {
-#                    'id': recipe.id,
-#                    'name': recipe.name,
-#                    'user': recipe.user,
-#                    'exihibitpic': recipe.exihibitpic,
-#                    'introduce': recipe.introduce,
-#                    'tag': tag_list,
-#                    'material': material_list,
-#                    'procedure': procedure_list,
-#                    },
-#                }
-#        data.append(items)
-#    context =  {
-#          'status': status.HTTP_200_OK,
-#          'data': data,
-#          }
-#    return Response(context, status=context.get('status'))
-
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def recipe(request):
@@ -214,5 +170,3 @@ def tagshow(request):
                         'tag': tag_name
                 })
         return Response(data, status=status.HTTP_200_OK)
-
->>>>>>> a5708253a902ed3a374ea7402cd98bd9d0d2d3f2
