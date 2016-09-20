@@ -164,11 +164,8 @@ def tags(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def recipe(request):
-#        import pdb
-#        pdb.set_trace()
         data = []
         tags = {}
-#	month = request.GET.get('month')
         recipes = Recipe.objects.all()
         recipes = Paginator(recipes,10)
         page = request.GET.get('page',1)
@@ -186,6 +183,8 @@ def recipe(request):
                 recipe_exihibitpic = recipe.exihibitpic
                 recipe_introduce = recipe.introduce
 		recipe_tips = recipe.tips
+	
+
                 tag_name = recipe.tag.filter(category__is_tag= 1 )[0].name
 
                 tag = None
@@ -204,7 +203,7 @@ def recipe(request):
 			'tips':recipe_tips,
                         'exihibitpic':"http://"+request.META['HTTP_HOST']+recipe_exihibitpic.url,
                         'introduce':recipe_introduce,
-                        'tag':recipe.tag.filter(category__is_tag= 1 )[0].name
+                         'tag': [{"category_name": x.category.name, 'name': x.name}for x in recipe.tag.all()]
                 })
         return Response(data, status=status.HTTP_200_OK)
 
