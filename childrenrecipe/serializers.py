@@ -31,19 +31,47 @@ class MaterialSerializer(serializers.ModelSerializer):
                 model = Material
                 fields = ('url','id','recipe_title','name','quantity','measureunits')   
 
-class ProcedureSerializer(serializers.ModelSerializer):
+
+class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
         recipe = serializers.CharField(source='recipe.name')
+        width = serializers.SerializerMethodField(read_only=True)
+        height = serializers.SerializerMethodField(read_only=True)
+
         class Meta:
                 model = Procedure
-                fields = ('url','id','recipe','seq','describe','image')
+                fields = ('url','id','recipe','seq','describe','image','width','height')
 
-class RecipeSerializer(serializers.ModelSerializer):
-	tag = TagSerializer(many=True)
-	material = MaterialSerializer(source='material_set',many=True)
-	procedure = ProcedureSerializer(source='procedure_set',many=True)
+        def get_width(self, obj):
+                if hasattr(obj, 'exihibitpic'):
+                        return obj.exihibitpic.width
+                return 500
 
-	
+        def get_height(self, obj):
+                if hasattr(obj, 'exihibitpic'):
+                        return obj.exihibitpic.height
+                return 375
+
+
+class RecipeSerializer(serializers.HyperlinkedModelSerializer):
+        tag = TagSerializer(many=True)
+        material = MaterialSerializer(source='material_set',many=True)
+        procedure = ProcedureSerializer(source='procedure_set',many=True)
+        width = serializers.SerializerMethodField(read_only=True)
+        height = serializers.SerializerMethodField(read_only=True)
+
         class Meta:
                 model = Recipe
-                fields = ('url','id','name','user','exihibitpic','introduce','tag',
-			'material','procedure')
+                fields = ('url','id','name','user','exihibitpic','introduce','tag','tips',
+                        'material','procedure','width','height'
+                        )
+
+        def get_width(self, obj):
+                if hasattr(obj, 'exihibitpic'):
+                        return obj.exihibitpic.width
+                return 0
+
+        def get_height(self, obj):
+                if hasattr(obj, 'exihibitpic'):
+                        return obj.exihibitpic.height
+                return 0
+

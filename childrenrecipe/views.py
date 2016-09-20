@@ -59,8 +59,68 @@ class APIRootView(APIView):
 
 class RecipeViewSet(viewsets.ModelViewSet):
 	queryset = Recipe.objects.all()
-#	serializer_class_create = RecipeCreateSerializer
 	serializer_class = RecipeSerializer
+
+
+#	def list(self, request):
+#        	recipes = Recipe.objects.values('id', 'create_time', 'name', 'user', 'exihibitpic',\
+#                   	              	         'introduce', 'tag__name', 'material__id',\
+#                        	                 'material__name', 'material__quantity', 'material__measureunits',\
+#                                	         'procedure__id', 'procedure__seq', 'procedure__describe',\
+#                                        	 'procedure__image', 'tag__category_id__name')
+#        	data = []
+#		recipes = Paginator(recipes,10)
+#	        page = request.GET.get('page',1)
+#        	try:
+#                	recipes = recipes.page(page)
+#        	except PageNotAnInteger:
+#                	recipes = recipes.page(1)
+#        	except EmptyPage:
+#                	recipes = recipes.page(recipes.num_pages)
+#        	for recipe in recipes:
+#            		tag_list = []
+#            		tag_list.append({
+#                    		'name': recipe['tag__name'],
+#                    		'category_name': recipe['tag__category_id__name'],
+#                    		})
+#
+#            		material_list = []
+#            		material_list.append({
+#                    		'id': recipe['material__id'],
+#                    		'recipe_title': recipe['name'],
+#                    		'name': recipe['material__name'],
+#                    		'quatity': recipe['material__quantity'],
+#                    		'measureunits': recipe['material__measureunits'],
+#                    		})
+#
+#            		procedure_list = []
+#            		procedure_list.append({
+#                    		'id': recipe['procedure__id'],
+#                    		'recipe': recipe['name'],
+#                    		'seq': recipe['procedure__seq'],
+#                    		'describe': recipe['procedure__describe'],
+#                    		'image': recipe['procedure__image'],
+#                    		})
+#            		items = {
+#                    		'tag': recipe['tag__name'],
+#                    		'recipes': {
+#                        	'id': recipe['id'],
+#                        	'name': recipe['name'],
+#                        	'user': recipe['user'],
+#                        	'exihibitpic': recipe['exihibitpic'],
+#                        	'introduce': recipe['introduce'],
+#                        	'tag': tag_list,
+#                        	'material': material_list,
+#                        	'procedure': procedure_list,
+#                        	},
+#                    	}
+#            		data.append(items)
+#        		context =  {
+#            	#		'status': status.HTTP_200_OK,
+#            	#		'msg': 'OK',
+#            			'data': data,
+#            		}
+#        	return Response(data,status=status.HTTP_200_OK)
 
 class CategoryViewSet(viewsets.ModelViewSet):
 	queryset = Category.objects.all()
@@ -104,10 +164,11 @@ def tags(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def recipe(request):
-        import pdb
-        pdb.set_trace()
+#        import pdb
+#        pdb.set_trace()
         data = []
         tags = {}
+#	month = request.GET.get('month')
         recipes = Recipe.objects.all()
         recipes = Paginator(recipes,10)
         page = request.GET.get('page',1)
@@ -124,6 +185,7 @@ def recipe(request):
                 recipe_user = recipe.user
                 recipe_exihibitpic = recipe.exihibitpic
                 recipe_introduce = recipe.introduce
+		recipe_tips = recipe.tips
                 tag_name = recipe.tag.filter(category__is_tag= 1 )[0].name
 
                 tag = None
@@ -135,15 +197,15 @@ def recipe(request):
                         data.append(tag)
                 tag['recipes'].append({
                         'id':recipe_id,
+			'url':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recipe_id),
                         'create_time':recipe_create_time,
                         'recipe':recipe_name,
                         'user':recipe_user,
+			'tips':recipe_tips,
                         'exihibitpic':"http://"+request.META['HTTP_HOST']+recipe_exihibitpic.url,
                         'introduce':recipe_introduce,
                         'tag':recipe.tag.filter(category__is_tag= 1 )[0].name
                 })
-        pdb.set_trace()
-
         return Response(data, status=status.HTTP_200_OK)
 
 

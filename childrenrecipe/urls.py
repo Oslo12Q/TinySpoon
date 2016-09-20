@@ -17,8 +17,7 @@ router.register(r'tag',views.TagViewSet)
 urlpatterns = [	
     url(r'^', include(router.urls)),
 	url(r'^tags$', views.tags, name='tags'),
-#	url(r'^recipes$', views.recipes ),
-	url(r'^recipe',views.recipe , name ='recipe'),	
+	url(r'^recipe$',views.recipe , name ='recipe'),	
 	url(r'^tagshow$', views.tagshow, name = 'tagshow'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT )
