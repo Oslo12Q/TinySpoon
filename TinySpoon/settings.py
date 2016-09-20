@@ -81,17 +81,18 @@ WSGI_APPLICATION = 'TinySpoon.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
-DATABASES = {
+TABASES = {
         'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'TinySpoon',
-	    'USER': 'root',
-    	'PASSWORD': 'mysql',
-    	'HOST': 'localhost',
-    	'PORT': '3306',
+        'USER': 'root',
+        'PASSWORD': os.getenv('DBPASSWD'),
+        'HOST': os.getenv('DBHOST'),
+        'PORT': '3306',
     }
 }
+
+
 
 
 # Password validation
