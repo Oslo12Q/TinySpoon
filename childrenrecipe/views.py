@@ -34,9 +34,7 @@ class UserViewSet(viewsets.ModelViewSet):
         queryset = User.objects.all()
         serializer_class = UserSerializer
 
-
 class GroupViewSet(viewsets.ModelViewSet):
-
         queryset = Group.objects.all()
         serializer_class = GroupSerializer
 
@@ -44,7 +42,6 @@ class APIRootView(APIView):
     def get(self, request):
         year = now().year
         data = {
-
             'year-summary-url': reverse('year-summary', args=[year], request=request)
         }
         return Response(data)
@@ -86,12 +83,12 @@ def tags(request):
                         if category_name in categorys:
                                 category = categorys[category_name]
                         else:
-                                category = {'id': category_seq, 'category': category_name, 'tags': []}
+                                category = {'seq': category_seq, 'category': category_name, 'tags': []}
                                 categorys[category_name] = category
                                 data.append(category)
                         category['tags'].append({
                                 'id': tag_id,
-                                'tag': tag_name
+                                'tag': tag_name,                                                            
                         })
 
                 #import pdb
@@ -99,10 +96,10 @@ def tags(request):
 
                 if len(data)>1:
                         for item in range(0, len(data)-1):
-                                #category_seq = data[item].get('id')
+                                #category_seq = data[item].get('seq')
                                 min = item
                                 for item2 in range(item+1, len(data)):
-                                        if data[item2].get('id') < data[min].get('id'):
+                                        if data[item2].get('seq') < data[min].get('seq'):
                                                 min = item2
                                 tmp = data[item]
                                 data[item] = data[min]
@@ -112,8 +109,7 @@ def tags(request):
                         pass
 
         else:
-                return Response(data, status=status.HTTP_404_NOT_FOUND)
-	#return Response(data, status=status.HTTP_200_OK)
+                return Response(data, status=status.HTTP_404_NOT_FOUND)	
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -263,7 +259,7 @@ def recommend(request):
         #import pdb 
         #pdb.set_trace()
 
-        now = datetime.datetime.now(tz=UTC())
+        now = datetime.datetime.now()
         if Recommend.objects.all().filter(pubdate__lte=now): 
                 recommend = Recommend.objects.all().filter(pubdate__lte=now).order_by('-pubdate').first()
         
@@ -285,20 +281,25 @@ def recommend(request):
                 #timedelays[item], timedelays[min] = timedelays[min], timedelays[item]
                 #print timedelays[item] 
         #recommend = json.loads(datacontent)
-
-        #recommend_image = recommend.image
+                
+                #import pdb
+                #pdb.set_trace()
+        
+                recommend_image = recommend.image.url
                 recommend_pubdate = recommend.pubdate
+                recommend_create_time = recommend.create_time
                 recommend_recipe_id = recommend.recipe.id
+                recommend_recipe_create_time = recommend.recipe.create_time
                 recommend_recipe_name = recommend.recipe.name
                 recommend_recipe_user = recommend.recipe.user
                 recommend_recipe_introduce = recommend.recipe.introduce
 
-                recommend = {'recommend_recipe_name': 'Today\'s Specials', 
-                        'pubdate': recommend_pubdate, 'recipe': {}}
-                #recommend = {'recommend_recipe_name': '', 'image': recommend_image, 
-                        #'pubdate': recommend_pubdate, 'recipe': {}}
+                recommend = {'recommend_recipe': 'Today\'s Specials', 'create_time': recommend_create_time,
+                        'pubdate': recommend_pubdate, 'image': "http://"+request.META['HTTP_HOST']+recommend_image, 'recipe': {}}
+
                 recommend['recipe'] = {
                         'id': recommend_recipe_id,
+                        'create_time': recommend_recipe_create_time,
                         'name': recommend_recipe_name,
                         'user': recommend_recipe_user,
                         'introduce': recommend_recipe_introduce
