@@ -173,14 +173,11 @@ def recipe(request):
         tags = {}
 #	import pdb
 #	pdb.set_trace()	
-	age = request.GET.get('age',None)
-	search = request.GET.get('search',None)
-	if age is None:
+	ages = request.GET.get('age',None)
+	if ages is None:
 		recipes = Recipe.objects.all()
-	elif search is None:
-        	recipes = Recipe.objects.filter(tag__name = age)
 	else:
-		recipes = Recipe.objects.filter(tag__name__in =[search])
+        	recipes = Recipe.objects.filter(tag__name__in = [ages])
 #	pdb.set_trace()
 	number_page = request.GET.get('number_page',10)
         recipes = Paginator(recipes,number_page)
