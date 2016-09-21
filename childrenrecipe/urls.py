@@ -20,6 +20,6 @@ urlpatterns = [
 	url(r'^recipe$',views.recipe, name = 'recipe'),
 	url(r'^tagshow$', views.tagshow, name = 'tagshow'),
 #	url(r'^search$',views.get_search, name ='search'),
-	url(r'^recommend/$', views.recommend, name='recommend')
+	url(r'^recommend/$', views.recommend, name='recommend'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT )

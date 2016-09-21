@@ -168,14 +168,22 @@ def tags(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def recipe(request):
+	
         data = []
         tags = {}
-	tag = request.GET.get('tag',None)
-	if tag is None:
+#	import pdb
+#	pdb.set_trace()	
+	age = request.GET.get('age',None)
+	search = request.GET.get('search',None)
+	if age is None:
 		recipes = Recipe.objects.all()
+	elif search is None:
+        	recipes = Recipe.objects.filter(tag__name = age)
 	else:
-        	recipes = Recipe.objects.filter(tag__name = tag)
-        recipes = Paginator(recipes,10)
+		recipes = Recipe.objects.filter(tag__name__in =[search])
+#	pdb.set_trace()
+	number_page = request.GET.get('number_page',10)
+        recipes = Paginator(recipes,number_page)
         page = request.GET.get('page',1)
         try:
                 recipes = recipes.page(page)
@@ -209,10 +217,9 @@ def recipe(request):
                         'exihibitpic':"http://"+request.META['HTTP_HOST']+recipe_exihibitpic.url,
                         'introduce':recipe_introduce,
                         'tag': [{"category_name": x.category.name, 'name': x.name}for x in recipe.tag.all()]
+
                 })
         return Response(data, status=status.HTTP_200_OK)
-
-
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -296,7 +303,8 @@ def recommend(request):
                         'create_time': timestamp_recipe_createtime,
                         'name': recommend_recipe_name,
                         'user': recommend_recipe_user,
-                        'introduce': recommend_recipe_introduce
+                        'introduce': recommend_recipe_introduce,
+			'url':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recommend_recipe_id),
                 }
                 return Response(recommend, status=status.HTTP_200_OK)
         else:
