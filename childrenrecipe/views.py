@@ -260,30 +260,10 @@ def recommend(request):
         #pdb.set_trace()
 
         now = datetime.datetime.now()
-        if Recommend.objects.all().filter(pubdate__lte=now): 
+        epoch = datetime.datetime(1970, 1, 1, tzinfo=None).replace(tzinfo=None)
+        
+	if Recommend.objects.all().filter(pubdate__lte=now): 
                 recommend = Recommend.objects.all().filter(pubdate__lte=now).order_by('-pubdate').first()
-        
-        #now = datetime.datetime.now()
-        #pubdates = recommends.get('pub_date')
-        #timedelays = []
-        
-        #for pubdate in pubdates:
-                #timedelay = now - pubdate
-                #if timedelay > 0:
-                        #timedelays.append(timedelay)
-
-  
-        #for item in range(0, len(timedelays)):
-                #min = item
-                #for item2 in range(item+1, len(timedelays)):
-                        #if timedelays[item2] < timedelays[min]:
-                                #min = item2
-                #timedelays[item], timedelays[min] = timedelays[min], timedelays[item]
-                #print timedelays[item] 
-        #recommend = json.loads(datacontent)
-                
-                #import pdb
-                #pdb.set_trace()
         
                 recommend_image = recommend.image.url
                 recommend_pubdate = recommend.pubdate
@@ -294,12 +274,19 @@ def recommend(request):
                 recommend_recipe_user = recommend.recipe.user
                 recommend_recipe_introduce = recommend.recipe.introduce
 
-                recommend = {'recommend_recipe': 'Today\'s Specials', 'create_time': recommend_create_time,
-                        'pubdate': recommend_pubdate, 'image': "http://"+request.META['HTTP_HOST']+recommend_image, 'recipe': {}}
+		td = recommend_recipe_create_time - epoch
+                td1 = recommend_create_time - epoch
+                td2 = recommend_pubdate - epoch
+		timestamp_recipe_createtime = int(td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6)
+                timestamp_createtime = int(td1.microseconds + (td1.seconds + td1.days * 24 * 3600) * 10**6)
+                timestamp_pubdate = int(td2.microseconds + (td2.seconds + td2.days * 24 * 3600) * 10**6)
+                
+                recommend = {'recommend_recipe': 'Today\'s Specials', 'create_time': timestamp_createtime,
+                        'pubdate': timestamp_pubdate, 'image': "http://"+request.META['HTTP_HOST']+recommend_image, 'recipe': {}}
 
                 recommend['recipe'] = {
                         'id': recommend_recipe_id,
-                        'create_time': recommend_recipe_create_time,
+                        'create_time': timestamp_recipe_createtime,
                         'name': recommend_recipe_name,
                         'user': recommend_recipe_user,
                         'introduce': recommend_recipe_introduce
