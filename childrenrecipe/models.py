@@ -19,8 +19,7 @@ class Recipe(models.Model):
 class Material(models.Model):
 	recipe = models.ForeignKey('Recipe')
 	name = models.CharField(max_length=200)
-	quantity = models.IntegerField()
-	measureunits = models.CharField(max_length=20)
+	portion = models.CharField(max_length=20)
 	def __unicode__(self):
 		return '%s %s' % (self.recipe.name, self.name)
 

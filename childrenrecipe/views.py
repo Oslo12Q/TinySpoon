@@ -16,11 +16,11 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import (
+from rest_framework.permissions import(
 	AllowAny,
 	IsAuthenticated
 )
-from rest_framework.decorators import (
+from rest_framework.decorators import(
 	api_view,
 	permission_classes,
 	parser_classes,
@@ -40,14 +40,11 @@ class JSONResponse(HttpResponse):
         	kwargs['content_type'] = 'application/json'
         	super(JSONResponse, self).__init__(content, **kwargs)
 
-
 class UserViewSet(viewsets.ModelViewSet):
         queryset = User.objects.all()
         serializer_class = UserSerializer
 
-
 class GroupViewSet(viewsets.ModelViewSet):
-
         queryset = Group.objects.all()
         serializer_class = GroupSerializer
 
@@ -55,7 +52,6 @@ class APIRootView(APIView):
     def get(self, request):
         year = now().year
         data = {
-
             'year-summary-url': reverse('year-summary', args=[year], request=request)
         }
         return Response(data)
@@ -146,24 +142,40 @@ class TagViewSet(viewsets.ModelViewSet):
 def tags(request):
 	data = []
 	categorys = {}
-	tags = Tag.objects.exclude(category__is_tag= 1 )
-	for tag in tags:
-		tag_id = tag.id
-		tag_name = tag.name
-		category_name = tag.category.name
-		category_seq = tag.category.seq
-		categroy = None
-		if category_name in categorys:
-			category = categorys[category_name]
-		else:
-			category = {'seq': category_seq, 'category': category_name, 'tags': []}
-			categorys[category_name] = category
-			data.append(category)
-		category['tags'].append({
-			'id': tag_id,
-			'tag': tag_name
-		})
-	return Response(data, status=status.HTTP_200_OK)
+	tags = Tag.objects.exclude(category__is_tag=1)
+        if tags:
+                for tag in tags:
+                        tag_id = tag.id
+                        tag_name = tag.name
+                        category_name = tag.category.name
+                        category_seq = tag.category.seq
+                        categroy = None
+                        if category_name in categorys:
+                                category = categorys[category_name]
+                        else:
+                                category = {'seq': category_seq, 'category': category_name, 'tags': []}
+                                categorys[category_name] = category
+                                data.append(category)
+                        category['tags'].append({
+                                'id': tag_id,
+                                'tag': tag_name,                                                            
+                        })
+
+                if len(data)>1:
+                        for item in range(0, len(data)-1):
+                                #category_seq = data[item].get('seq')
+                                min = item
+                                for item2 in range(item+1, len(data)):
+                                        if data[item2].get('seq') < data[min].get('seq'):
+                                                min = item2
+                                tmp = data[item]
+                                data[item] = data[min]
+                                data[min] = tmp
+                        return Response(data, status=status.HTTP_200_OK)
+                else:
+                        return Response(data, status=status.HTTP_200_OK)                       
+        else:
+                return Response(data, status=status.HTTP_200_OK) 
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -196,7 +208,7 @@ def recipe(request):
                 recipe_exihibitpic = recipe.exihibitpic
                 recipe_introduce = recipe.introduce
 		recipe_tips = recipe.tips
-                tag_name = recipe.tag.filter(category__is_tag= 1 )[0].name
+                tag_name = recipe.tag.filter(category__is_tag=1)[0].name
                 tag = None
                 if tag_name in tags:
                         tag = tags[tag_name]
@@ -273,11 +285,13 @@ def tagshow(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def recommend(request):
+        
         now = datetime.datetime.now()
-        epoch = datetime.datetime(1970, 1, 1, tzinfo=None).replace(tzinfo=None)
+        epoch = datetime.datetime(1970, 1, 1)+datetime.timedelta(hours=8)
 
 	if Recommend.objects.all().filter(pubdate__lte=now): 
                 recommend = Recommend.objects.all().filter(pubdate__lte=now).order_by('-pubdate').first()
+                
                 recommend_image = recommend.image.url
                 recommend_pubdate = recommend.pubdate
                 recommend_create_time = recommend.create_time
@@ -293,8 +307,10 @@ def recommend(request):
 		timestamp_recipe_createtime = int(td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6)
                 timestamp_createtime = int(td1.microseconds + (td1.seconds + td1.days * 24 * 3600) * 10**6)
                 timestamp_pubdate = int(td2.microseconds + (td2.seconds + td2.days * 24 * 3600) * 10**6)
+                
                 recommend = {'recommend_recipe': 'Today\'s Specials', 'create_time': timestamp_createtime,
                         'pubdate': timestamp_pubdate, 'image': "http://"+request.META['HTTP_HOST']+recommend_image, 'recipe': {}}
+                
                 recommend['recipe'] = {
                         'id': recommend_recipe_id,
                         'create_time': timestamp_recipe_createtime,
@@ -303,7 +319,9 @@ def recommend(request):
                         'introduce': recommend_recipe_introduce,
 			'url':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recommend_recipe_id),
                 }
+     
                 return Response(recommend, status=status.HTTP_200_OK)
+        
         else:
                 recommend = {}
-                return Response(recommend, status=status.HTTP_404_NOT_FOUND)
+                return Response(recommend, status=status.HTTP_200_OK)
