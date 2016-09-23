@@ -29,7 +29,7 @@ class MaterialSerializer(serializers.ModelSerializer):
         recipe_title = serializers.CharField(source='recipe.name')
         class Meta:
                 model = Material
-                fields = ('url','id','recipe_title','name','quantity','measureunits')   
+                fields = ('url','id','recipe_title','name','portion')   
 
 
 class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
@@ -53,7 +53,7 @@ class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RecipeSerializer(serializers.HyperlinkedModelSerializer):
-        tag = TagSerializer(many=True)
+        tags = TagSerializer(many=True)
         material = MaterialSerializer(source='material_set',many=True)
         procedure = ProcedureSerializer(source='procedure_set',many=True)
         width = serializers.SerializerMethodField(read_only=True)
@@ -61,7 +61,7 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
 
         class Meta:
                 model = Recipe
-                fields = ('url','id','name','user','exihibitpic','introduce','tag','tips',
+                fields = ('url','id','name','user','exihibitpic','introduce','tags','tips',
                         'material','procedure','width','height'
                         )
 

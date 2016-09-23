@@ -12,7 +12,7 @@ class ProcedureInline(admin.TabularInline):
 	extra = 1
 
 class RecipeAdmin(admin.ModelAdmin):
-	filter_horizontal = ('tag',)
+	filter_horizontal = ('tags',)
 	inlines = [
 		MaterialInline,
 		ProcedureInline,

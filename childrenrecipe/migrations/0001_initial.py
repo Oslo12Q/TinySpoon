@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='recipe',
-            name='tag',
+            name='tags',
             field=models.ManyToManyField(to='childrenrecipe.Tag'),
         ),
         migrations.AddField(

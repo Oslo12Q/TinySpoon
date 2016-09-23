@@ -200,6 +200,10 @@ def recipe(request):
                 recipes = recipes.page(1)
         except EmptyPage:
                 recipes = recipes.page(recipes.num_pages)
+        
+
+        epoch = datetime.datetime(1970, 1, 1)+datetime.timedelta(hours=8)                    
+        
         for recipe in recipes:
                 recipe_id = recipe.id
                 recipe_create_time = recipe.create_time
@@ -208,26 +212,34 @@ def recipe(request):
                 recipe_exihibitpic = recipe.exihibitpic
                 recipe_introduce = recipe.introduce
 		recipe_tips = recipe.tips
-                tag_name = recipe.tag.filter(category__is_tag=1)[0].name
-                tag = None
-                if tag_name in tags:
-                        tag = tags[tag_name]
+                
+                td = recipe_create_time - epoch             
+		timestamp_recipe_createtime = int(td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6)
+                
+                if recipe.tag.filter(category__is_tag=1):
+                        tag_name = recipe.tag.filter(category__is_tag=1)[0].name
+                        tag = None
+                        if tag_name in tags:
+                                tag = tags[tag_name]
+                        else:
+                                tag = {'age':tag_name, 'recipes':[]}
+                                tags[tag_name] = tag
+                                data.append(tag)
                 else:
-                        tag = {'tag':tag_name, 'recipes':[]}
-                        tags[tag_name] = tag
-                        data.append(tag)
-                tag['recipes'].append({
-                        'id':recipe_id,
-			'url':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recipe_id),
-                        'create_time':recipe_create_time,
-                        'recipe':recipe_name,
-                        'user':recipe_user,
-			'tips':recipe_tips,
-                        'exihibitpic':"http://"+request.META['HTTP_HOST']+recipe_exihibitpic.url,
-                        'introduce':recipe_introduce,
-                        'tag': [{"category_name": x.category.name, 'name': x.name}for x in recipe.tag.all()]
+                        pass
 
+                tag['recipes'].append({
+                        'id': recipe_id,
+                        'url': "http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recipe_id),
+                        'create_time': timestamp_recipe_createtime,
+                        'name': recipe_name,
+                        'user': recipe_user,
+                        'tips': recipe_tips,
+                        'exihibitpic': "http://"+request.META['HTTP_HOST']+recipe_exihibitpic.url,
+                        'introduce': recipe_introduce,
+                        'tag': [{"category_name": x.category.name, 'name': x.name}for x in recipe.tag.all()]
                 })
+        
         return Response(data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
@@ -235,7 +247,7 @@ def recipe(request):
 def tagshow(request):
 	data = []
         categorys = {}
-        tags = Tag.objects.filter(category__is_tag= 1)
+        tags = Tag.objects.filter(category__is_tag=1)
         for tag in tags:
                 tag_id = tag.id
                 tag_name = tag.name

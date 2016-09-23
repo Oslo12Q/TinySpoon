@@ -7,12 +7,12 @@ from django.conf.urls.static import static
 
 
 router = routers.DefaultRouter()
-#router.register(r'users', views.UserViewSet)
-#router.register(r'groups', views.GroupViewSet)
+router.register(r'users', views.UserViewSet)
+router.register(r'groups', views.GroupViewSet)
 #router.register(r'category',views.CategoryViewSet)
-#router.register(r'material',views.MaterialViewSet)
-#router.register(r'procedure',views.ProcedureViewSet)
-#router.register(r'recipes',views.RecipeViewSet)
+router.register(r'material',views.MaterialViewSet)
+router.register(r'procedure',views.ProcedureViewSet)
+router.register(r'recipes',views.RecipeViewSet)
 #router.register(r'tag',views.TagViewSet)
 urlpatterns = [	
     url(r'^', include(router.urls)),
