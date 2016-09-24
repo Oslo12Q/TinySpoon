@@ -19,11 +19,11 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 
 from rest_framework.response import Response
-from rest_framework.permissions import (
+from rest_framework.permissions import(
 	AllowAny,
 	IsAuthenticated
 )
-from rest_framework.decorators import (
+from rest_framework.decorators import(
 	api_view,
 	permission_classes,
 	parser_classes,
@@ -43,14 +43,11 @@ class JSONResponse(HttpResponse):
         	kwargs['content_type'] = 'application/json'
         	super(JSONResponse, self).__init__(content, **kwargs)
 
-
 class UserViewSet(viewsets.ModelViewSet):
         queryset = User.objects.all()
         serializer_class = UserSerializer
 
-
 class GroupViewSet(viewsets.ModelViewSet):
-
         queryset = Group.objects.all()
         serializer_class = GroupSerializer
 
@@ -58,7 +55,6 @@ class APIRootView(APIView):
     def get(self, request):
         year = now().year
         data = {
-
             'year-summary-url': reverse('year-summary', args=[year], request=request)
         }
         return Response(data)
@@ -68,65 +64,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 	serializer_class = RecipeSerializer
 	ordering =('-create_time')
 
-#	def list(self, request):
-#        	recipes = Recipe.objects.values('id', 'create_time', 'name', 'user', 'exihibitpic',\
-#                   	              	         'introduce', 'tag__name', 'material__id',\
-#                        	                 'material__name', 'material__quantity', 'material__measureunits',\
-#                                	         'procedure__id', 'procedure__seq', 'procedure__describe',\
-#                                        	 'procedure__image', 'tag__category_id__name')
-#        	data = []
-#		recipes = Paginator(recipes,10)
-#	        page = request.GET.get('page',1)
-#        	try:
-#                	recipes = recipes.page(page)
-#        	except PageNotAnInteger:
-#                	recipes = recipes.page(1)
-#        	except EmptyPage:
-#                	recipes = recipes.page(recipes.num_pages)
-#        	for recipe in recipes:
-#            		tag_list = []
-#            		tag_list.append({
-#                    		'name': recipe['tag__name'],
-#                    		'category_name': recipe['tag__category_id__name'],
-#                    		})
-#
-#            		material_list = []
-#            		material_list.append({
-#                    		'id': recipe['material__id'],
-#                    		'recipe_title': recipe['name'],
-#                    		'name': recipe['material__name'],
-#                    		'quatity': recipe['material__quantity'],
-#                    		'measureunits': recipe['material__measureunits'],
-#                    		})
-#
-#            		procedure_list = []
-#            		procedure_list.append({
-#                    		'id': recipe['procedure__id'],
-#                    		'recipe': recipe['name'],
-#                    		'seq': recipe['procedure__seq'],
-#                    		'describe': recipe['procedure__describe'],
-#                    		'image': recipe['procedure__image'],
-#                    		})
-#            		items = {
-#                    		'tag': recipe['tag__name'],
-#                    		'recipes': {
-#                        	'id': recipe['id'],
-#                        	'name': recipe['name'],
-#                        	'user': recipe['user'],
-#                        	'exihibitpic': recipe['exihibitpic'],
-#                        	'introduce': recipe['introduce'],
-#                        	'tag': tag_list,
-#                        	'material': material_list,
-#                        	'procedure': procedure_list,
-#                        	},
-#                    	}
-#            		data.append(items)
-#        		context =  {
-#            	#		'status': status.HTTP_200_OK,
-#            	#		'msg': 'OK',
-#            			'data': data,
-#            		}
-#        	return Response(data,status=status.HTTP_200_OK)
 
 class CategoryViewSet(viewsets.ModelViewSet):
 	queryset = Category.objects.all()
@@ -150,7 +87,6 @@ def tags(request):
 	data = []
 	categorys = {}
 	tags = Tag.objects.exclude(category__is_tag= 1 )
-	
 	if tags:
                 for tag in tags:
                         tag_id = tag.id
@@ -185,42 +121,42 @@ def tags(request):
         else:
                 return Response(data, status=status.HTTP_200_OK) 
 
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @csrf_exempt
 def recipe(request):
-        data = []
+	
+	data = []
         tags = {}
-	ages = []
-	search = None
-	create_time = None
-	search = request.data.get('search',None)
-	ages = request.data.get('age',None)
-	create_time = request.data.get('create_time', None)
-	print ages
-	if ages is None and search is None:
-		recipes = Recipe.objects.all().order_by('create_time')[:2]
-	elif search == None:
-		recipes = Recipe.objects.filter(tag__id__in = ages).order_by('create_time')[:2]
-	else:
-		recipes = Recipe.objects.filter(Q(name = search)|Q(user = search)|Q(tag__name = search)).order_by('create_time')[:2]
+        ages = []
+        search = None
+        create_time = None
+        search = request.data.get('search',None)
+        ages = request.data.get('age',None)
+        create_time = request.data.get('create_time', None)
+        print ages
+        if ages is None and search is None:
+                recipes = Recipe.objects.all().order_by('create_time')[:2]
+        elif search == None:
+                recipes = Recipe.objects.filter(tag__id__in = ages).order_by('create_time')[:2]
+        else:
+                recipes = Recipe.objects.filter(Q(name = search)|Q(user = search)|Q(tag__name = search)).order_by('create_time')[:2]
 
-	epoch = datetime.datetime(1970, 1, 1)+datetime.timedelta(hours=8)
+        epoch = datetime.datetime(1970, 1, 1)+datetime.timedelta(hours=8)
         for recipe in recipes:
                 recipe_id = recipe.id
                 recipe_create_time = recipe.create_time
                 recipe_name = recipe.name
                 recipe_user = recipe.user
                 recipe_exihibitpic = recipe.exihibitpic
-                recipe_introduce = recipe.introduce
-		recipe_tips = recipe.tips
+		recipe_introduce = recipe.introduce
+                recipe_tips = recipe.tips
 
-		td = recipe_create_time - epoch
-		timestamp_recipe_createtime = int(td.microseconds + (td.seconds + td.days * 24 * 3600))
+                td = recipe_create_time - epoch
+                timestamp_recipe_createtime = int(td.microseconds + (td.seconds + td.days * 24 * 3600))
 
                 tag_name = recipe.tag.filter(category__is_tag= 1 )[0].name
-		
+
                 tag = None
                 if tag_name in tags:
                         tag = tags[tag_name]
@@ -230,11 +166,11 @@ def recipe(request):
                         data.append(tag)
                 tag['recipes'].append({
                         'id':recipe_id,
-			'url':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recipe_id),
+                        'url':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recipe_id),
                         'create_time':timestamp_recipe_createtime,
                         'recipe':recipe_name,
                         'user':recipe_user,
-			'tips':recipe_tips,
+                        'tips':recipe_tips,
                         'exihibitpic':"http://"+request.META['HTTP_HOST']+recipe_exihibitpic.url,
                         'introduce':recipe_introduce,
                         'tag': [{"category_name": x.category.name, 'name': x.name}for x in recipe.tag.all()]
@@ -242,12 +178,13 @@ def recipe(request):
                 })
 	return Response(data, status=status.HTTP_200_OK)
 
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def tagshow(request):
 	data = []
         categorys = {}
-        tags = Tag.objects.filter(category__is_tag= 1)
+        tags = Tag.objects.filter(category__is_tag=1)
         for tag in tags:
                 tag_id = tag.id
                 tag_name = tag.name
@@ -271,6 +208,7 @@ def recommend(request):
         
         now = datetime.datetime.now()
         epoch = datetime.datetime(1970, 1, 1)+datetime.timedelta(hours=8)
+
 	if Recommend.objects.all().filter(pubdate__lte=now): 
                 recommend = Recommend.objects.all().filter(pubdate__lte=now).order_by('-pubdate').first()
                 
