@@ -32,7 +32,7 @@ from rest_framework.decorators import (
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from rest_framework.renderers import JSONRenderer
-from django.core.handlers.wsgi import WSGIRequest
+
 # Create your views here.
 class JSONResponse(HttpResponse):
         """
@@ -190,22 +190,34 @@ def tags(request):
 @permission_classes([AllowAny])
 @csrf_exempt
 def recipe(request):
+	import json	
+	import pdb
         data = []
         tags = {}
 	ages = []
-	search = None
-	create_time = None
-	search = request.data.get('search',None)
-	ages = request.data.get('age',None)
-	create_time = request.data.get('create_time', None)
-	print ages
-	if ages is None and search is None:
-		recipes = Recipe.objects.all().order_by('create_time')[:2]
-	elif search == None:
-		recipes = Recipe.objects.filter(tag__id__in = ages).order_by('create_time')[:2]
+#	search = None
+#	search = request.POST.get('search',None)
+	req = simplejson.loads(request.raw_post_data)
+	
+#ages = request.POST.get('age',ages)
+	pdb.set_trace()
+	if ages is None:
+		recipes = Recipe.objects.all()
 	else:
-		recipes = Recipe.objects.filter(Q(name = search)|Q(user = search)|Q(tag__name = search)).order_by('create_time')[:2]
+		recipes = Recipe.objects.filter(tag__id__in = ages)
 
+#	if ages == None and search == None:
+#		recipes = Recipe.objects.all()
+#	elif ages == ages and search == None:
+#		recipes = Recipe.objects.filter(tag__id__in = [ages])
+#	else:
+#		recipes = Recipe.objects.filter(Q(name = search)|Q(user = search)|Q(tag__name = search))
+	pdb.set_trace()
+
+#	create_time = None
+#	create_time = request.POST.get('create_time',None)
+#	recipes = Recipe.objects.filter(create_time = carate_time).values
+	
 	epoch = datetime.datetime(1970, 1, 1)+datetime.timedelta(hours=8)
         for recipe in recipes:
                 recipe_id = recipe.id

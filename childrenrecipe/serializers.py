@@ -29,7 +29,7 @@ class MaterialSerializer(serializers.ModelSerializer):
         recipe_title = serializers.CharField(source='recipe.name')
         class Meta:
                 model = Material
-                fields = ('url','id','recipe_title','name','quantity','measureunits')   
+                fields = ('url','id','recipe_title','name','portion')   
 
 
 class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
@@ -64,7 +64,7 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
                 fields = ('url','id','name','user','exihibitpic','introduce','tag','tips',
                         'material','procedure','width','height'
                         )
-
+		ordering =('-create_time')
         def get_width(self, obj):
                 if hasattr(obj, 'exihibitpic'):
                         return obj.exihibitpic.width
