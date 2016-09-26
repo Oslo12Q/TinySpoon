@@ -7,6 +7,7 @@ import datetime
 from django.utils.timezone import UTC
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
+from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets
 from childrenrecipe.serializers import *
@@ -205,7 +206,9 @@ def tagshow(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def recommend(request):
-        
+        #import pdb
+        #pdb.set_trace()
+
         now = datetime.datetime.now()
         epoch = datetime.datetime(1970, 1, 1)+datetime.timedelta(hours=8)
 
@@ -237,7 +240,7 @@ def recommend(request):
                         'name': recommend_recipe_name,
                         'user': recommend_recipe_user,
                         'introduce': recommend_recipe_introduce,
-			'url':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recommend_recipe_id),
+			'url': "http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recommend_recipe_id)
                 }
      
                 return Response(recommend, status=status.HTTP_200_OK)
