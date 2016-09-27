@@ -41,16 +41,15 @@ class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
                 model = Procedure
                 fields = ('url','id','recipe','seq','describe','image','width','height')
 
-        def get_width(self, obj):
-                if hasattr(obj, 'image'):
-                        return obj.image.width
-                return 0
+	def get_width(self, obj):
+		if hasattr(obj, 'image') and hasattr(obj.image, 'image'):
+			return obj.image.image.width
+		return 0
 
-        def get_height(self, obj):
-                if hasattr(obj, 'image'):
-                        return obj.image.height
-                return 0
-
+	def get_height(self, obj):
+		if hasattr(obj, 'image') and hasattr(obj.image, 'image'):
+			return obj.image.image.height
+		return 0
 
 class RecipeSerializer(serializers.HyperlinkedModelSerializer):
         tag = TagSerializer(many=True)
