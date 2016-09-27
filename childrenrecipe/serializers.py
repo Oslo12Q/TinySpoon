@@ -36,7 +36,7 @@ class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
         recipe = serializers.CharField(source='recipe.name')
         width = serializers.SerializerMethodField(read_only=True)
         height = serializers.SerializerMethodField(read_only=True)
-
+	
         class Meta:
                 model = Procedure
                 fields = ('url','id','recipe','seq','describe','image','width','height')

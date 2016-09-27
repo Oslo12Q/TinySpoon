@@ -12,7 +12,7 @@ class Recipe(models.Model):
 	exihibitpic = models.ImageField(upload_to='exhibited_picture/%Y/%m/%d', blank=False)
 	introduce = models.TextField(blank=False)
 	tips = models.TextField(blank=True)
-	tag = models.ManyToManyField('Tag')
+	tag = models.ManyToManyField('Tag')	
 	def __unicode__(self):
 		return self.name
 
