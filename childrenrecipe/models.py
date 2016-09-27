@@ -36,6 +36,7 @@ class Procedure(models.Model):
 class Tag(models.Model):
 	name = models.CharField(max_length=100)
 	category = models.ForeignKey('Category')
+	seq = models.IntegerField()
 	def __unicode__(self):
 		return self.name
 

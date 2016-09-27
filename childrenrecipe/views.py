@@ -141,47 +141,47 @@ def recipe(request):
 	print tag
         print ages
 	if ages is None and search is None and tag is None:
-                recipes = Recipe.objects.all()
+                recipes = Recipe.objects.all().order_by('tag__seq','create_time')
         elif search is None:
-		recipes = Recipe.objects.all()
+		recipes = Recipe.objects.all().order_by('tag__seq','create_time')
 		for recipe in recipes:
 			if ages is None:
 				print '1'
-				recipes = Recipe.objects.filter(tag__id__in = tag).order_by('create_time')[:10]
+				recipes = Recipe.objects.filter(tag__id__in = tag).order_by('tag__seq','create_time')[:10]
 				for recipe in recipes:
                         		if create_time is None:
-                                		recipes = Recipe.objects.filter(tag__id = tag).order_by('create_time')[:10]
+                                		recipes = Recipe.objects.filter(tag__id = tag).order_by('tag__seq','create_time')[:10]
 					else:
 						createtime = time.localtime(int(create_time))
                                 		s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
-                                		recipes = Recipe.objects.filter(Q(tag__id = tag) & Q(create_time__gt = s)).order_by('create_time')[:10]
+                                		recipes = Recipe.objects.filter(Q(tag__id = tag) & Q(create_time__gt = s)).order_by('tag__seq','create_time')[:10]
 
                         elif tag is None:
-				recipes = Recipe.objects.filter(tag__id__in = ages).order_by('create_time')[:10]
+				recipes = Recipe.objects.filter(tag__id__in = ages).order_by('tag__seq','create_time')[:10]
 				for recipe in recipes:
 					if create_time is None:
-						recipes = Recipe.objects.filter(tag__id__in = ages).order_by('create_time')[:10]
+						recipes = Recipe.objects.filter(tag__id__in = ages).order_by('tag__seq','create_time')[:10]
 					else:
 						createtime = time.localtime(int(create_time))
                                                 s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
-						recipes = Recipe.objects.filter(Q(tag__id__in = ages) & Q(create_time__gt = s)).order_by('create_time')[:10]
+						recipes = Recipe.objects.filter(Q(tag__id__in = ages) & Q(create_time__gt = s)).order_by('tag__seq','create_time')[:10]
 
 			else:	
-                                recipes = Recipe.objects.filter(tag__id = tag).filter(tag__id__in = ages).order_by('create_time')[:10]
+                                recipes = Recipe.objects.filter(tag__id = tag).filter(tag__id__in = ages).order_by('tag__seq','create_time')[:10]
 				for recipe in recipes:
 					if create_time is None:
-						recipes = Recipe.objects.filter(tag__id = tag).filter(tag__id__in = ages).order_by('create_time')[:10]
+						recipes = Recipe.objects.filter(tag__id = tag).filter(tag__id__in = ages).order_by('tag__seq','create_time')[:10]
 					else:
                 				createtime = time.localtime(int(create_time))
                 				s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
-                				recipes = Recipe.objects.filter(tag__id__in = tag).filter(Q(tag__id__in = ages) & Q(create_time__gt = s)).order_by('create_time')[:10]
+                				recipes = Recipe.objects.filter(tag__id__in = tag).filter(Q(tag__id__in = ages) & Q(create_time__gt = s)).order_by('tag__seq','create_time')[:10]
 
         else:   
-                recipes = Recipe.objects.filter(Q(name = search)|Q(tag__name = search)).order_by('create_time')
+                recipes = Recipe.objects.filter(Q(name = search)|Q(tag__name = search)).order_by('tag__seq','create_time')
                 for recipe in recipes:
                         if create_time is None:
 				print 'no'
-                                recipes = Recipe.objects.filter(Q(name = search)|Q(tag__name = search)).order_by('create_time')[:10]
+                                recipes = Recipe.objects.filter(Q(name = search)|Q(tag__name = search)).order_by('tag__seq','create_time')[:10]
                         else:
 				print 'yes'
                                 createtime = time.localtime(int(create_time))
@@ -221,9 +221,10 @@ def recipe(request):
                         'tips':recipe_tips,
                         'exihibitpic':"http://"+request.META['HTTP_HOST']+recipe_exihibitpic.url,
                         'introduce':recipe_introduce,
-                        'tag': [{"category_name": x.category.name, 'name': x.name}for x in recipe.tag.all()]
+                        'tag': [{"category_name": x.category.name, 'name': x.name}for x in recipe.tag.filter(category__is_tag = 4)]
 
                 })
+		
 	return Response(data, status=status.HTTP_200_OK)
 
 
