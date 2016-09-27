@@ -57,11 +57,12 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
         procedure = ProcedureSerializer(source='procedure_set',many=True)
         width = serializers.SerializerMethodField(read_only=True)
         height = serializers.SerializerMethodField(read_only=True)
-
+	share_url = serializers.SerializerMethodField()
+	ordering = ('share_url',)
         class Meta:
                 model = Recipe
                 fields = ('url','id','name','user','exihibitpic','introduce','tag','tips',
-                        'material','procedure','width','height'
+                        'material','procedure','width','height','share_url'
                         )
 		ordering =('-create_time')
         def get_width(self, obj):
@@ -73,4 +74,5 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
                 if hasattr(obj, 'exihibitpic'):
                         return obj.exihibitpic.height
                 return 0
-
+	def get_share_url(self,obj):
+		return 'http://www.baidu.com'

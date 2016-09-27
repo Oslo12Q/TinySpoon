@@ -155,15 +155,6 @@ def recipe(request):
 						createtime = time.localtime(int(create_time))
                                 		s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
                                 		recipes = Recipe.objects.filter(Q(tag__id = tag) & Q(create_time__gt = s)).order_by('create_time')[:10]
-						try:
-							if recipes[0] is None:
-								pass
-						except:
-							recipes = Recipe.objects.filter(tag__id__in = tag)
-							for recipe in recipes:
-								data = { "tag_id": tag, "recipes": []}
-							
-							return Response(data, status=status.HTTP_200_OK)
 
                         elif tag is None:
 				recipes = Recipe.objects.filter(tag__id__in = ages).order_by('create_time')[:10]
@@ -174,15 +165,6 @@ def recipe(request):
 						createtime = time.localtime(int(create_time))
                                                 s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
 						recipes = Recipe.objects.filter(Q(tag__id__in = ages) & Q(create_time__gt = s)).order_by('create_time')[:10]
-						try:
-                                                        if recipes[0] is None:
-                                                                pass
-                                                except:
-                                                        recipes = Recipe.objects.filter(tag__id__in = ages)
-                                                        for recipe in recipes:
-                                                                data = {"tag_id": ages, "recipes": []}
-                                                                
-                                                        return Response(data, status=status.HTTP_200_OK)
 
 			else:	
                                 recipes = Recipe.objects.filter(tag__id = tag).filter(tag__id__in = ages).order_by('create_time')[:10]
@@ -192,17 +174,7 @@ def recipe(request):
 					else:
                 				createtime = time.localtime(int(create_time))
                 				s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
-						
                 				recipes = Recipe.objects.filter(tag__id__in = tag).filter(Q(tag__id__in = ages) & Q(create_time__gt = s)).order_by('create_time')[:10]
-						try:
-                                                        if recipes[0] is None:
-                                                                pass
-                                                except:
-                                                        recipes = Recipe.objects.filter(tag__id__in = tag)
-                                                        for recipe in recipes:
-                                                                data = { "tag_id": tag, "recipes": []}
-                                                               
-                                                        return Response(data, status=status.HTTP_200_OK)
 
         else:   
                 recipes = Recipe.objects.filter(Q(name = search)|Q(tag__name = search)).order_by('create_time')
