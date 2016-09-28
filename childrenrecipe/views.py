@@ -146,7 +146,6 @@ def recipe(request):
 		recipes = Recipe.objects.all().order_by('tag__seq','create_time')
 		for recipe in recipes:
 			if ages is None:
-				print '1'
 				recipes = Recipe.objects.filter(tag__id__in = tag).order_by('tag__seq','create_time')[:10]
 				for recipe in recipes:
                         		if create_time is None:
@@ -176,17 +175,20 @@ def recipe(request):
                 				s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
                 				recipes = Recipe.objects.filter(tag__id__in = tag).filter(Q(tag__id__in = ages) & Q(create_time__gt = s)).order_by('tag__seq','create_time')[:10]
 
-        else:   
-                recipes = Recipe.objects.filter(Q(name = search)|Q(tag__name = search)).order_by('tag__seq','create_time')
-                for recipe in recipes:
-                        if create_time is None:
-				print 'no'
-                                recipes = Recipe.objects.filter(Q(name = search)|Q(tag__name = search)).order_by('tag__seq','create_time')[:10]
-                        else:
-				print 'yes'
-                                createtime = time.localtime(int(create_time))
-                                s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
-                                recipes = Recipe.objects.filter(Q(name = search)|Q(tag__name = search) & Q(create_time__gt = s))[:10]
+        else:  		 
+                recipes = Recipe.objects.filter(Q(name__contains = search)|Q(tag__name = search)).order_by('tag__seq','create_time')
+		for recipe in recipes:
+			if tag is None:
+				recipes = Recipe.objects.filter(Q(name__contains = search)|Q(tag__name = search)).order_by('tag__seq','create_time')
+			else:
+				recipes = Recipe.objects.filter(tag__id__in = tag).filter(Q(name__contains = search)|Q(tag__name = search)).order_by('tag__seq','create_time')
+                		for recipe in recipes:
+                        		if create_time is None:
+						recipes = Recipe.objects.filter(tag__id__in = tag).filter(Q(name__contains = search)|Q(tag__name = search)).order_by('tag__seq','create_time')
+                        		else:
+                                		createtime = time.localtime(int(create_time))
+                                		s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
+                                		recipes = Recipe.objects.filter(tag__id__in = tag).filter(Q(name = search)|Q(tag__name = search) & Q(create_time__gt = s)).order_by('tag__seq','create_time')[:10]
 				
 
 #	pdb.set_trace()
