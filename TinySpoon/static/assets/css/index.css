@@ -1,0 +1,210 @@
+/*分辨屏幕大小*/
+@media only screen and (max-width: 414px) {
+  html {
+    font-size: 55px;
+  }
+  .content_box {
+    margin: 1.5% 5%;
+    clear: both;
+  }
+  .img_des_box {
+    margin-top: 0.2rem;
+  }
+  .img_des_box .img_des {
+    width: 90%;
+    display: block;
+    margin-bottom: 0.2rem!important;
+  }
+  .img_des_box .img_des .img {
+    display: block;
+  }
+  .img_des_box .img_des .des {
+    padding-left: 0!important;
+    line-height: 0.35rem;
+    display: block;
+    margin-top: 0.1rem;
+  }
+  .img_des_box .img_des .des span {
+    color: red;
+    font-size: 0.3rem;
+    margin-right: 0.1rem;
+  }
+  .img_des_box tr:last-child {
+    margin-bottom: 0!important;
+  }
+}
+@media only screen and (min-width: 768px) {
+  html {
+    font-size: 70px;
+  }
+  .box {
+    margin: 10%;
+  }
+  .content_box {
+    margin: 1.5% 5%;
+    clear: both;
+  }
+}
+@media only screen and (min-width: 992px) {
+  html {
+    font-size: 100px;
+  }
+  .box {
+    margin: 10%;
+  }
+  .content_box {
+    margin: 1.5% 5%;
+    clear: both;
+  }
+}
+@media only screen and (min-width: 1200px) {
+  html {
+    font-size: 150px;
+  }
+  .box {
+    margin: 5% 20%;
+  }
+  .content_box {
+    margin: 1.5% 5%;
+    clear: both;
+  }
+}
+html,
+body,
+ul,
+li,
+p {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.phone html {
+  font-size: 55px;
+}
+.phone .content_box {
+  margin: 1.5% 5%;
+  clear: both;
+}
+.phone .img_des_box {
+  margin-top: 0.2rem;
+}
+.phone .img_des_box .img_des {
+  width: 90%;
+  display: block;
+  margin-bottom: 0.2rem!important;
+}
+.phone .img_des_box .img_des .img {
+  display: block;
+}
+.phone .img_des_box .img_des .des {
+  padding-left: 0!important;
+  line-height: 0.35rem;
+  display: block;
+  margin-top: 0.1rem;
+}
+.phone .img_des_box .img_des .des span {
+  color: red;
+  font-size: 0.3rem;
+  margin-right: 0.1rem;
+}
+.phone .img_des_box tr:last-child {
+  margin-bottom: 0!important;
+}
+/*container*/
+/*logo*/
+.logo {
+  margin: 0 5%;
+  width: 100%;
+  height: 0.8rem;
+  background: url('../images/logo.png') left no-repeat;
+  background-size: 1.5rem;
+}
+/*title*/
+.big_title {
+  width: 100%;
+  height: 0.8rem;
+  line-height: 0.8rem;
+  font-size: 0.3rem;
+}
+.small_title {
+  width: 100%;
+  height: 0.6rem;
+  line-height: 0.6rem;
+  font-size: 0.25rem;
+  color: #c8beac;
+}
+.border_box {
+  border-bottom: 1px dashed #ccc;
+}
+/*img*/
+.banner {
+  width: 100%;
+}
+/*label*/
+.label_box {
+  overflow: hidden;
+}
+.label_box .label {
+  display: block;
+  width: 1.2rem;
+  height: 0.4rem;
+  line-height: 0.4rem;
+  font-size: 0.2rem;
+  font-weight: bold;
+  text-align: center;
+  background: #fcbea6;
+  float: left;
+  margin-right: 0.2rem;
+  margin-bottom: 0.2rem;
+}
+/*TextDescription*/
+.des {
+  width: 100%;
+  font-size: 0.2rem;
+  margin: 0;
+  line-height: 0.4rem;
+}
+/*list*/
+.list {
+  width: 100%;
+}
+.list .row .rank {
+  height: 0.5rem;
+  line-height: 0.5rem;
+  font-size: 0.2rem;
+  border-bottom: 1px dashed #ccc;
+  padding-left: 0.2rem;
+}
+.list .row .left {
+  width: 40%;
+}
+.list .row .right {
+  padding-left: 0!important;
+}
+/*Image & Text*/
+.img_des_box {
+  margin-top: 0.2rem;
+}
+.img_des_box .img_des {
+  width: 90%;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.img_des_box .img_des .img {
+  display: block;
+  width: 3rem;
+  padding-top: 0.2rem;
+}
+.img_des_box .img_des .des {
+  vertical-align: top;
+  padding-left: 0.5rem;
+  line-height: 0.35rem;
+}
+.img_des_box .img_des .des span {
+  color: red;
+  font-size: 0.3rem;
+  margin-right: 0.1rem;
+}
+.img_des_box tr:last-child {
+  margin-bottom: 0!important;
+}

@@ -131,7 +131,7 @@ class RecommendTests(TestCase):
 
         import pdb
         pdb.set_trace()
-        recommend_response = self.client.get('/api/recommend/', extra={'HTTP_HOST'}:'testserver')
+        recommend_response = self.client.get('/api/recommend/')
         recommend_response_content = recommend_response.content
         self.assertEqual(recommend_response.status_code, 200)
         self.assertGreater(recommend_response_content.get('pubdate'), recommend_response_content.get('create_time'))
@@ -619,7 +619,7 @@ class RecipesTests(TestCase):
         import pdb
         pdb.set_trace()
 
-        tag_id = int(tag1.id)
+        tag_id = str(tag1.id)
         payload = {"tag_id": tag_id}
         #payload = {'age': tag1.id, 'content_type': 'application/json'}
         recipes_response = self.client.post('/api/recipe', data=payload, content_type='application/json' )

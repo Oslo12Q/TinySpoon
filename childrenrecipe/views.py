@@ -146,7 +146,7 @@ def recipe(request):
 		recipes = Recipe.objects.all().order_by('tag__seq','create_time')
 		for recipe in recipes:
 			if ages is None:
-				recipes = Recipe.objects.filter(tag__id__in = tag).order_by('tag__seq','create_time')[:10]
+				recipes = Recipe.objects.filter(tag__id = tag).order_by('tag__seq','create_time')[:10]
 				for recipe in recipes:
                         		if create_time is None:
                                 		recipes = Recipe.objects.filter(tag__id = tag).order_by('tag__seq','create_time')[:10]
