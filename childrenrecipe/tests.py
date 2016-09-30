@@ -662,7 +662,7 @@ class RecipesTests(TestCase):
         pdb.set_trace()
 
         tag_id = int(tag1.id)
-        payload = {"age": tag_id}
+        payload = {"age": [tag_id]}
         recipes_response = self.client.post('/api/recipe', data=payload, content_type='application/json')
         self.assertEqual(recipes_response.status_code, 200)    
 
