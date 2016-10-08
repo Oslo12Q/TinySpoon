@@ -53,7 +53,7 @@ gulp.task('compose', function(){
 //压缩js脚本
 gulp.task('uglify',['browserify'],function(){
     return gulp.src('./assets/js/*.js')
-    .pipe(ngmin({dynamic: false}))
+    //.pipe(ngmin({dynamic: false}))
     .pipe(uglify({outSourceMap: true}))
     .pipe(rename({extname: '.min.js'}))
     .pipe(gulp.dest('./assets/js/'));
@@ -81,4 +81,4 @@ gulp.task('watch-js',function(){
 
 gulp.task('compile',['less','browserify']);
 gulp.task('default',['compile', 'connect','watch']);
-gulp.task('port',['compile','watch']);
+gulp.task('port',['uglify','compile','watch']);

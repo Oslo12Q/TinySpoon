@@ -15,7 +15,6 @@ class Recipe(models.Model):
 	tag = models.ManyToManyField('Tag')	
 	def __unicode__(self):
 		return self.name
-	
 
 class Material(models.Model):
 	recipe = models.ForeignKey('Recipe')

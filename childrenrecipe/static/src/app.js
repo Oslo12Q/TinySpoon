@@ -153,15 +153,16 @@ var GetData = React.createClass({
 });
 
 //获取url参数
-function getRequest(){
-	var url = window.location.href;
-	console.log(url);
+function getUrl(){
+	var url = window.location.search;
+	if(url.indexOf("?")!=-1){
+		var str = url.substr(1);
+		var strs = str.split("=");
+		return strs;
+	}
 }
-getRequest();
-
-
-var dataId = '';
-var requestURL = "http://218.240.151.115:8081/api/recipes/158";
+var id = getUrl()[1];
+var requestURL = "http://218.240.151.115:8081/api/recipes/"+id;
 
 ReactDOM.render(
   <GetData source={requestURL}/>,

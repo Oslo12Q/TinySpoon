@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
-
+from . import config
 class UserSerializer(serializers.HyperlinkedModelSerializer):
         class Meta:
             model = User
@@ -72,4 +72,5 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
                         return obj.exihibitpic.height
                 return 0
 	def get_share_url(self,obj):
-		return ''
+		return config.CARD_RECIPE_URL % obj.id
+
