@@ -352,7 +352,7 @@ def recommend(request):
                 timestamp_pubdate = int(td2.microseconds + (td2.seconds + td2.days * 24 * 3600) * 10**6)
                 
                 recommend = {'recommend_recipe': 'Today\'s Specials', 'create_time': timestamp_createtime,
-                        'pubdate': timestamp_pubdate, 'image': "http://"+request.META['HTTP_HOST']+recommend_image, 'recipe': {}}
+                        'pubdate': timestamp_pubdate, 'image': request.build_absolute_uri(recommend_image), 'recipe': {}}
                 
                 recommend['recipe'] = {
                         'id': recommend_recipe_id,
@@ -360,9 +360,8 @@ def recommend(request):
                         'name': recommend_recipe_name,
                         'user': recommend_recipe_user,
                         'introduce': recommend_recipe_introduce,
-			'url': "http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recommend_recipe_id)
+			'url': "http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recommend_recipe_id)      
                 }
-     
                 return Response(recommend, status=status.HTTP_200_OK)
         
         else:
