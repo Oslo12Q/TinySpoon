@@ -39,21 +39,10 @@ gulp.task('browserify',function(){
 });
 
 
-gulp.task('compose', function(){
-  return browserify('./app/assets/javascripts/main.js', {debug: true})
-    .transform(babelify.configure({presets: ['es2015', 'react']}))
-    .bundle()
-    .pipe(source('bundle.js'))
-    .pipe(rename({basename: 'main'}))
-    .pipe(gulp.dest('./public/assets/global/scripts/'));
-});
-
-
-
 //压缩js脚本
 gulp.task('uglify',['browserify'],function(){
     return gulp.src('./assets/js/*.js')
-    //.pipe(ngmin({dynamic: false}))
+    .pipe(ngmin({dynamic: false}))
     .pipe(uglify({outSourceMap: true}))
     .pipe(rename({extname: '.min.js'}))
     .pipe(gulp.dest('./assets/js/'));
