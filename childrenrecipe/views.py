@@ -232,10 +232,12 @@ def recipe(request):
 	if tags_ is None:
         	tags = Tag.objects.filter(category__is_tag=1).order_by('seq')
 	else:
-		tags = Tag.objects.filter(id__in = tags_).order_by('seq')
+		tags = Tag.objects.filter(id__in = tags_).order_by('seq')		
+#	pdb.set_trace()
 	print tags
         for _ in tags:
-		
+	#	if Tag.objects.filter(category__is_tag=1) is _.id:
+	#		recipes = _.recipe_set.filter(tag__id__in = _.id)
        		if create_time is None:
        			recipes = _.recipe_set.order_by('create_time')[:10]
 		else:
@@ -277,6 +279,7 @@ def recipe(request):
                                'introduce':recipe_introduce,
                                'tag': [{"category_name": x.category.name, 'name': x.name}for x in recipe.tag.filter(category__is_tag = 4)]
 			})
+			data.sort(key=lambda x : x['tag_id'])
 	return Response(data, status=status.HTTP_200_OK)
 	
 @api_view(['GET'])

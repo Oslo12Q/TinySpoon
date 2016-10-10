@@ -151,15 +151,13 @@ var GetData = React.createClass({
 });
 
 //获取url参数
-function getUrl(){
-	var url = window.location.search;
-	if(url.indexOf("?")!=-1){
-		var str = url.substr(1);
-		var strs = str.split("=");
-		return strs;
-	}
-}
-var id = getUrl()[1];
+function getQueryString(name) { 
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+	var r = window.location.search.substr(1).match(reg); 
+	if (r != null) return unescape(r[2]); return null; 
+} 
+var id = getQueryString('state');
+
 var requestURL = "http://218.240.151.115:8081/api/recipes/"+id;
 
 ReactDOM.render(

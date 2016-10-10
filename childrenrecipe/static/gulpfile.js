@@ -42,7 +42,7 @@ gulp.task('browserify',function(){
 //压缩js脚本
 gulp.task('uglify',['browserify'],function(){
     return gulp.src('./assets/js/*.js')
-    .pipe(ngmin({dynamic: false}))
+    //.pipe(ngmin({dynamic: false}))
     .pipe(uglify({outSourceMap: true}))
     .pipe(rename({extname: '.min.js'}))
     .pipe(gulp.dest('./assets/js/'));
