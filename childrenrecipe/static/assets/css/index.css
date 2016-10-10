@@ -113,10 +113,9 @@ p {
 /*container*/
 /*logo*/
 .logo {
-  margin: 0 5%;
   width: 100%;
   height: 0.8rem;
-  background: url('../images/logo.png') left no-repeat;
+  background: url('../images/logo.png') 5% no-repeat;
   background-size: 1.5rem;
 }
 /*title*/

@@ -239,12 +239,18 @@ def recipe(request):
 	#	if Tag.objects.filter(category__is_tag=1) is _.id:
 	#		recipes = _.recipe_set.filter(tag__id__in = _.id)
        		if create_time is None:
-       			recipes = _.recipe_set.order_by('create_time')[:10]
-		else:
+			if search is None:
+       				recipes = _.recipe_set.order_by('create_time')[:10]
+			else:
+				recipes = _.recipe_set.filter(name__contains = search).order_by('create_time')[:10]
+		elif search is None:
        			createtime = time.localtime(int(create_time))
        			s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
        			recipes = _.recipe_set.filter(create_time__gt = s ).order_by('create_time')[:10]
-			
+		else:
+			createtime = time.localtime(int(create_time))
+                        s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
+                        recipes = _.recipe_set.filter(name__contains = search).filter(create_time__gt = s ).order_by('create_time')[:10]
        		print recipes
        	        epoch = datetime.datetime(1970, 1, 1)+datetime.timedelta(hours=8)
        	        for recipe in recipes:
