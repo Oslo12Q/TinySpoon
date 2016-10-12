@@ -1,11 +1,15 @@
+#coding=utf-8
 from django.test import TestCase
 from django.core.files import File
+from childrenrecipe.manager import get_recipe, create_category, create_tag, create_recipe
 from django.test import Client
 from .models import *
 import json
 import datetime
 import exceptions
 # Create your tests here.
+
+
 
 class RecommendTests(TestCase): 
     def setUp(self):

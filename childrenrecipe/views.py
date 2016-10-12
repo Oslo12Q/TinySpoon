@@ -192,7 +192,30 @@ def recipe(request):
 			})
 			data.sort(key=lambda x : x['tag_id'])
 	return Response(data, status=status.HTTP_200_OK)
-	
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@csrf_exempt
+def reci(request):
+    import pdb
+    search = request.data.get('search',None)
+    create_time = request.data.get('create_time', None)
+    tags = request.data.get('tag_id',None)
+    print tags
+    def get_tag(tags=None):
+	if tags is not None:
+	    stage = Tag.objects.filter(category__is_tag = 1).filter(id__ = tags)
+	    tags = Tag.objects.filter(category__is_tag != 1).filter(id__ = tags) 
+   	    print stage
+	    print tags
+	    pdb.set_trace()
+	else:
+	   return Tag.objects.none()
+ 
+    def get_recipe(tags_ = None,serach=None,create_time=None):
+
+	pass
+    return Response(status=status.HTTP_200_OK)
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def tagshow(request):
