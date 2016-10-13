@@ -49,6 +49,8 @@ class Category(models.Model):
 class Recommend(models.Model):
 	create_time = models.DateTimeField(auto_now=True)
 	recipe = models.ForeignKey('Recipe')
+	name = models.CharField(max_length=200, blank=True)
+	introduce = models.TextField(blank=True)
 	image = models.ImageField(upload_to='exhibited_picture/%Y/%m/%d', blank=False)
 	pubdate = models.DateTimeField()
 	def __unicode__(self):
