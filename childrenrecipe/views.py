@@ -142,7 +142,6 @@ def recipe(request):
 		tags = Tag.objects.filter(id__in = tags_).order_by('seq')		
 	print tags
         for _ in tags:
-			
        		if create_time is None:
 			if search is None:
        				recipes = _.recipe_set.order_by('create_time')[:10]
@@ -172,11 +171,12 @@ def recipe(request):
 
        	                tag_name = recipe.tag.filter(category__is_tag= 1 )[0].name
        	                tag_id = recipe.tag.filter(category__is_tag = 1 )[0].id
+			tag_seq = recipe.tag.filter(category__is_tag = 1)[0].seq
 			tag = None
                         if tag_name in ta:
                                 tag = ta[tag_name]
                         else:
-                                tag = {'tag':tag_name,'tag_id':tag_id, 'recipes':[]}
+                                tag = {'tag':tag_name,'tag_id':tag_id, 'tag_seq':tag_seq,'recipes':[]}
                                 ta[tag_name] = tag
                                 data.append(tag)
                         tag['recipes'].append({
@@ -190,7 +190,7 @@ def recipe(request):
                                'introduce':recipe_introduce,
                                'tag': [{"category_name": x.category.name, 'name': x.name}for x in recipe.tag.filter(category__is_tag = 4)]
 			})
-			data.sort(key=lambda x : x['tag_id'])
+			data.sort(key=lambda x : x['tag_seq'])
 	return Response(data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
@@ -203,25 +203,28 @@ def reci(request):
     tags = request.data.get('tag_id',None)
     print tags
     def get_tag(tags=None):
+	pdb.set_trace()
 	if tags is not None:
-	    stage = Tag.objects.filter(category__is_tag = 1).filter(id__ = tags)
-	    tags = Tag.objects.filter(category__is_tag != 1).filter(id__ = tags) 
+	    x= Tag.objects.filter(id__in = tags_)
+	    stage =  [x.id for x in age]
    	    print stage
 	    print tags
 	    pdb.set_trace()
 	else:
 	   return Tag.objects.none()
- 
+	print stage 
     def get_recipe(tags_ = None,serach=None,create_time=None):
 
 	pass
+    pdb.set_trace()
+
     return Response(status=status.HTTP_200_OK)
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def tagshow(request):
 	data = []
         categorys = {}
-        tags = Tag.objects.filter(category__is_tag=1)
+        tags = Tag.objects.filter(category__is_tag=1).order_by('seq')
         for tag in tags:
                 tag_id = tag.id
                 tag_name = tag.name
