@@ -256,6 +256,16 @@ def recommend(request):
 	if Recommend.objects.all().filter(pubdate__lte=now): 
                 recommend = Recommend.objects.all().filter(pubdate__lte=now).order_by('-pubdate').first()
                 
+                if recommend.name:
+                        recommend_name = recommend.name
+                else:
+                        recommend_name = recommend.recipe.name
+
+                if recommend.introduce:
+                        recommend_introduce = recommend.introduce
+                else:
+                        recommend_introduce = recommend.recipe.introduce
+
                 recommend_image = recommend.image.url
                 recommend_pubdate = recommend.pubdate
                 recommend_create_time = recommend.create_time
@@ -273,7 +283,8 @@ def recommend(request):
                 timestamp_pubdate = int(td2.microseconds + (td2.seconds + td2.days * 24 * 3600) * 10**6)
                 
                 recommend = {'recommend_recipe': 'Today\'s Specials', 'create_time': timestamp_createtime,
-                        'pubdate': timestamp_pubdate, 'image': request.build_absolute_uri(recommend_image), 'recipe': {}}
+                        'pubdate': timestamp_pubdate, 'image': request.build_absolute_uri(recommend_image), 
+                        'name': recommend_name, 'introduce': recommend_introduce, 'recipe': {}}
                 
                 recommend['recipe'] = {
                         'id': recommend_recipe_id,
@@ -281,7 +292,7 @@ def recommend(request):
                         'name': recommend_recipe_name,
                         'user': recommend_recipe_user,
                         'introduce': recommend_recipe_introduce,
-			'url': "http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recommend_recipe_id)      
+                        'url': "http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recommend_recipe_id)      
                 }
                 return Response(recommend, status=status.HTTP_200_OK)
         
