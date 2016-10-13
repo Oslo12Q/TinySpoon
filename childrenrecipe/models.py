@@ -27,7 +27,7 @@ class Procedure(models.Model):
 	recipe = models.ForeignKey('Recipe')
 	seq = models.IntegerField()
 	describe = models.TextField(blank=False)
-	image = models.ImageField(upload_to='exhibited_picture/%Y/%m/%d', blank=True)
+	image = models.ImageField(upload_to='exhibited_picture/%Y/%m/%d',blank=True)
 	create_time = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
 		return self.recipe.name

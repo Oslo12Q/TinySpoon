@@ -30,26 +30,25 @@ class MaterialSerializer(serializers.ModelSerializer):
                 model = Material
                 fields = ('url','id','recipe_title','name','portion')   
 
-
 class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
         recipe = serializers.CharField(source='recipe.name')
         width = serializers.SerializerMethodField(read_only=True)
         height = serializers.SerializerMethodField(read_only=True)
-	
         class Meta:
                 model = Procedure
                 fields = ('url','id','recipe','seq','describe','image','width','height')
 
 	def get_width(self, obj):
-		if hasattr(obj, 'image') and hasattr(obj.image, 'image'):
-			return obj.image.image.width
+		if hasattr(obj.image, 'image'):
+			return obj.image.width
 		return 0
 
 	def get_height(self, obj):
-		if hasattr(obj, 'image') and hasattr(obj.image, 'image'):
-			return obj.image.image.height
+		if hasattr(obj.image, 'image'):
+			return obj.image.height
 		return 0
 
+		
 class RecipeSerializer(serializers.HyperlinkedModelSerializer):
         tag = TagSerializer(many=True)
         material = MaterialSerializer(source='material_set',many=True)
@@ -71,6 +70,7 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
                 if hasattr(obj, 'exihibitpic'):
                         return obj.exihibitpic.height
                 return 0
+
 	def get_share_url(self,obj):
 		return config.CARD_RECIPE_URL % obj.id
 
