@@ -158,7 +158,7 @@ function getQueryString(name) {
 } 
 var id = getQueryString('state');
 
-var requestURL = "http://218.240.151.115:8081/api/recipes/"+id;
+var requestURL = "http://caimiao.yijiayinong.com:8081/api/recipes/"+id;
 
 ReactDOM.render(
   <GetData source={requestURL}/>,
