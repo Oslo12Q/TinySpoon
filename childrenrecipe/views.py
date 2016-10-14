@@ -77,6 +77,7 @@ class MaterialViewSet(viewsets.ModelViewSet):
 class ProcedureViewSet(viewsets.ModelViewSet):
 	queryset = Procedure.objects.all()
 	serializer_class = ProcedureSerializer
+	
 
 class TagViewSet(viewsets.ModelViewSet):
 	queryset = Tag.objects.all()

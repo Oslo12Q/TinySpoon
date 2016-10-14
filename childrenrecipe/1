@@ -34,24 +34,21 @@ class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
         recipe = serializers.CharField(source='recipe.name')
         width = serializers.SerializerMethodField(read_only=True)
         height = serializers.SerializerMethodField(read_only=True)
-
-	def get_width(self, obj):
-		try:
-               		if hasattr(obj, 'image'):
-                        	return obj.image.width
-		except Exception,e:
-                	return 0
-
-        def get_height(self, obj):
-		try:
-                	if hasattr(obj, 'image'):
-                        	return obj.image.height
-		except Exception,e:
-                	return 0
-	class Meta:
+        class Meta:
                 model = Procedure
                 fields = ('url','id','recipe','seq','describe','image','width','height')
 
+	def get_width(self, obj):
+		if hasattr(obj, 'image'):
+			return obj.image.width
+		return 0
+
+	def get_height(self, obj):
+		if hasattr(obj, 'image'):
+			return obj.image.height
+		return 0
+
+		
 class RecipeSerializer(serializers.HyperlinkedModelSerializer):
         tag = TagSerializer(many=True)
         material = MaterialSerializer(source='material_set',many=True)
@@ -59,27 +56,21 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
         width = serializers.SerializerMethodField(read_only=True)
         height = serializers.SerializerMethodField(read_only=True)
 	share_url = serializers.SerializerMethodField()
-
-        def get_width(self, obj):
-		try:
-                	if hasattr(obj, 'exihibitpic'):
-                        	return obj.exihibitpic.width
-		except Exception,e:
-               		return 0
-
-        def get_height(self, obj):
-		try:
-                	if hasattr(obj, 'exihibitpic'):
-                        	return obj.exihibitpic.height
-		except Exception,e:
-                	return 0
-
-	def get_share_url(self,obj):
-		return config.CARD_RECIPE_URL % obj.id
-
-	class Meta:
+        class Meta:
                 model = Recipe
                 fields = ('url','id','name','user','exihibitpic','introduce','tag','tips',
                         'material','procedure','width','height','share_url'
                         )
+        def get_width(self, obj):
+                if hasattr(obj, 'exihibitpic'):
+                        return obj.exihibitpic.width
+                return 0
+
+        def get_height(self, obj):
+                if hasattr(obj, 'exihibitpic'):
+                        return obj.exihibitpic.height
+                return 0
+
+	def get_share_url(self,obj):
+		return config.CARD_RECIPE_URL % obj.id
 
