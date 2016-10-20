@@ -240,6 +240,12 @@ class AgeTagManage:
         return self.tag_age_ids - tag
 
 
+class AgeQuery:
+    def __init__(self, query, age_tag_id):
+        self.query = query
+        self.age_tag_id = age_tag_id
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @csrf_exempt
@@ -261,15 +267,16 @@ def recipe(request):
         assert len(age_tag_id) == 1 
         rest_ages = age_tag_manager.rest_age_tags(age_tag_id)
         age_tag_id_ls = list(age_tag_id)
-        query = query.filter(tag=age_tag_id_ls[0])
+        age_id = age_tag_id_ls[0]
+        query = query.filter(tag=age_tag_id_ls[0]) 
         rest_query_tags = set(tags_) - age_tag_id
-        querys = [query]
+        querys = [AgeQuery(query, age_id)]
     else:
         querys = []
-        for _age_tag_id in age_tag_manager.tag_age_ids:
+        for _age_tag_id in age_tag_manager.tag_age_ids: 
             query = Recipe.objects
             query = query.filter(tag=_age_tag_id)
-            querys.append(query)
+            querys.append(AgeQuery(query, _age_tag_id))
 
     q = Q()
     for tag_id in rest_query_tags:
@@ -279,8 +286,9 @@ def recipe(request):
         createtime = time.localtime(int(create_time))
         s = time.strftime('%Y-%m-%d %H:%M:%S', createtime)
 
-    res_recipes = set()
-    for query in querys:
+    for age_query in querys:
+        query = age_query.query
+        age_tag_id = age_query.age_tag_id
         query = query.filter(q)  
         if search:
             query = query.filter(name__contains=search)
@@ -288,28 +296,19 @@ def recipe(request):
             query = query.filter(create_time__lt=s)
         recipes = query.order_by('-create_time')[:10]
 
+        query_tag = Tag.objects.filter(id=age_tag_id)
+        tag_first = query_tag[0]
+        tag_name = tag_first.name
+        tag_id = tag_first.id
+        tag_seq = tag_first.seq
+
+        tag = {'tag': tag_name, 'tag_id': tag_id, 'tag_seq': tag_seq, 'recipes': []}
+        _recipes = []
         for recipe in recipes:
-	    if recipe in res_recipes:
-	        continue
-	    res_recipes.add(recipe)
             recipe_create_time = recipe.create_time
 
             td = recipe_create_time - EPOCH
             timestamp_recipe_createtime = int(td.microseconds + (td.seconds + td.days * 24 * 3600))
-
-            query_tag = recipe.tag.filter(category__is_tag=1)
-            tag_first = query_tag[0]
-
-            tag_name = tag_first.name
-            tag_id = tag_first.id
-            tag_seq = tag_first.seq
-
-            if tag_name in ta:
-                tag = ta[tag_name]
-            else:
-                tag = {'tag': tag_name, 'tag_id': tag_id, 'tag_seq': tag_seq, 'recipes': []}
-                ta[tag_name] = tag
-                data.append(tag)
 
             _tags = [{"category_name": x.category.name, 'name': x.name}
                         for x in recipe.tag.filter(category__is_tag=4)]
@@ -317,7 +316,10 @@ def recipe(request):
                                              host=host,
                                              create_time=timestamp_recipe_createtime,
                                              tags=_tags)
-            tag['recipes'].append(recipe_item.to_data())
+            _recipes.append(recipe_item.to_data())
+        if recipes:
+            tag['recipes'] = _recipes
+            data.append(tag)
     data.sort(key=lambda x: x['tag_seq'])
     return Response(data, status=status.HTTP_200_OK)
 
