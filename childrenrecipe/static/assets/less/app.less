@@ -1,18 +1,41 @@
 /*分辨屏幕大小*/
-@media only screen and (max-width: 414px){
+@media screen and (max-width: 800px){
+     html{
+        font-size: 80px;
+    }
+}
+@media screen and (max-width: 500px){
      html{
         font-size: 55px;
     }
 }
+@media screen and (max-width: 360px){
+     html{
+        font-size: 55px;
+    }
+    .label_box{
+        width:4.4rem!important;
+    }
+}
 
-html,body,ul,li,p{
-    margin: 0;
-    padding: 0;
-    list-style: none;
+body, ul, li, h1, h2, h3, h4, h5, h6, p, form, dl, dt, dd { margin: 0px; padding: 0px; font-size: 12px; font-weight: normal; }
+ul { list-style: none; }
+img { border-style: none;display: block; }
+
+body{
+    font-size: 80px;
+}
+
+.app_controller{
+    display: block !important;
+}
+.pc_controller{
+    display: none !important;;
 }
 
 /*logo*/
 .logo{
+    display: none;
     margin: 0 0.2rem;
     height: 0.8rem;
     background:url('../images/logo.png') left no-repeat;
@@ -23,18 +46,22 @@ html,body,ul,li,p{
     width: 100%;
     height: 0.8rem;
     line-height: 0.8rem;
-    font-size: 0.3rem;
+    font-size: 0.6rem;
+    font-weight: bold;
     text-align: center;
+    display: none;
+    margin-top:0.3rem;
 }
 .small_title{
     width: 100%;
     height: 0.6rem;
     line-height: 0.6rem;
-    font-size: 0.25rem;
+    font-size: 0.5rem;
     color: #c8beac;
     text-align: center;
 }
 .border_box{
+    padding-bottom: 0.3rem;
     border-bottom:1px dashed #ccc;
 }
 
@@ -45,32 +72,38 @@ html,body,ul,li,p{
 /*label*/
 .label_box{
     overflow: hidden;
-    margin: 0 0.7rem;
+    width:6.6rem;
+    margin:0.4rem auto;
     .label{
-        padding: 0.1rem 0.15rem;
-        display: block;
-        height: 0.4rem;
-        line-height: 0.4rem;
-        font-size: 0.2rem;
+        width: 1.8rem;
+        padding: 0.1rem;
+        font-size: 0.3rem;
         font-weight: bold;
         text-align: center;
         background: #fcbea6; 
         float: left;
-        margin-right:0.2rem;
-        margin-bottom: 0.2rem;
+        margin:0.1rem;
     }
 }
 
 /*TextDescription*/
 .des{
-    font-size: 0.2rem;
-    margin: 0.4rem 0.2rem;
-    line-height: 0.4rem;
+    font-size: 0.4rem;
+    margin: 0.4rem 0.3rem;
+    line-height: 0.6rem;
+}
+.des_border{
+    font-size: 0.4rem;
+    margin: 0 0.3rem;
+    padding: 0.4rem 0;
+    line-height: 0.6rem;
+    border-top:1px solid #f0f0f0;
 }
 
 /*list*/
 .list{
-    width: 100%;         
+    width: 100%;
+    margin-bottom: 0.3rem;         
     tr:last-child{
          .rank{
             border-bottom:none;
@@ -79,9 +112,9 @@ html,body,ul,li,p{
     .row{
         .rank{
             width: 50%;
-            height: 0.6rem;
-            line-height: 0.6rem;
-            font-size: 0.2rem;
+            height: 0.8rem;
+            line-height: 0.8rem;
+            font-size: 0.4rem;
             border-bottom:1px dashed #ccc;
             text-align: center;
         }
@@ -92,23 +125,23 @@ html,body,ul,li,p{
 .img_des_box{
     margin-top: 0.4rem;
     .img_des{
-        margin: 0 0.2rem;
+        margin: 0 0.4rem;
         .num{
             width: 0.4rem;
             float: left;
             color: red;
-            font-size: 0.3rem;
+            font-size: 0.5rem;
         }
         .img{
-            width:4.5rem;
+            width:90%;
             display: block;
         }
-        .des{
-            width: 4.5rem;
-            margin-top: 0.2rem;
-            margin-left: 0.4rem;
+        .step_des{
+            width: 90%;
             display: block;
-            line-height: 0.35rem;
+            font-size: 0.4rem;
+            margin: 0.4rem 0.3rem;
+            line-height: 0.6rem;
         }
     }
     tr:last-child{

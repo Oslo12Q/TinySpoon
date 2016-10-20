@@ -1,107 +1,49 @@
-/*分辨屏幕大小*/
-@media only screen and (max-width: 414px){
-    .phone;
+
+body, ul, li, h1, h2, h3, h4, h5, h6, p, form, dl, dt, dd { margin: 0px; padding: 0px; font-size: 12px; font-weight: normal; }
+ul { list-style: none; }
+img { border-style: none;display: block; }
+
+body{
+    width: 650px;
+    margin: 5rem auto;
+    font-size: 100px;
 }
-@media only screen and (min-width: 768px){
-    html{
-        font-size: 70px;
-    }
-     .box{
-        margin:10%;
-    }
-    .content_box{
-        margin:1.5% 5%;
-        clear: both;
-    }
+.app_controller{
+    display: none !important;
 }
-@media only screen and (min-width: 992px){
-    html{
-        font-size: 100px;
-    }
-     .box{
-        margin:10%;
-    }
-    .content_box{
-        margin:1.5% 5%;
-        clear: both;
-    }    
-}
-@media only screen and (min-width: 1200px){
-    html{
-        font-size: 150px;
-    }
-    .box{
-        margin:5% 20%;
-    }
-    .content_box{
-        margin:1.5% 5%;
-        clear: both;
-    }
+.pc_controller{
+    display: block !important;
+    border-bottom:none !important;
 }
 
-html,body,ul,li,p{
-    margin: 0;
-    padding: 0;
-    list-style: none;
+.big_box{
+    margin-left: 2rem;
 }
-
-.phone{
-    html{
-        font-size: 55px;
-    }
-    .content_box{
-        margin:1.5% 5%;
-        clear: both;
-    }
-    .img_des_box{
-        margin-top: 0.2rem;
-        .img_des{
-            width: 90%;
-            display: block;
-            margin-bottom: 0.2rem!important;
-            .img{
-                display: block;
-            }
-            .des{
-                padding-left: 0!important;
-                line-height: 0.35rem;
-                display: block;
-                margin-top: 0.1rem;
-                span{
-                    color: red;
-                    font-size: 0.3rem;
-                    margin-right:0.1rem; 
-                }
-            }
-        }
-        tr:last-child{
-            margin-bottom:0!important;
-        }
-    }
-}
-
-/*container*/
 
 /*logo*/
 .logo{
     width: 100%;
-    height: 0.8rem;
-    background:url('../images/logo.png') 5% no-repeat;
-    background-size: 1.5rem;
+    height: 3rem;
+    background:url('../images/logo.png') no-repeat;
 }
 /*title*/
 .big_title{
     width: 100%;
-    height: 0.8rem;
-    line-height: 0.8rem;
-    font-size: 0.3rem;
+    height: 2rem;
+    line-height: 2rem;
+    font-size: 2rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+    display: none;
 }
 .small_title{
     width: 100%;
-    height: 0.6rem;
-    line-height: 0.6rem;
-    font-size: 0.25rem;
+    height: 2rem;
+    line-height: 2rem;
+    font-size: 1.5rem;
     color: #c8beac;
+    padding-top: 2rem;
+    padding-bottom: 1.2rem;
 }
 .border_box{
     border-bottom:1px dashed #ccc;
@@ -114,18 +56,16 @@ html,body,ul,li,p{
 /*label*/
 .label_box{
     overflow: hidden;
+    margin-top: 0.8rem;
+    margin-bottom: 1.5rem;
     .label{
-        display: block;
-        width: 1.2rem;
-        height: 0.4rem;
-        line-height: 0.4rem;
-        font-size: 0.2rem;
+        width: 10rem;
+        font-size: 1.5rem;
         font-weight: bold;
         text-align: center;
         background: #fcbea6; 
         float: left;
-        margin-right:0.2rem;
-        margin-bottom: 0.2rem;
+        margin:0.3rem 0.5rem;
     }
 }
 
@@ -134,9 +74,13 @@ html,body,ul,li,p{
 /*TextDescription*/
 .des{
     width: 100%;
-    font-size: 0.2rem;
+    font-size: 1.2rem;
     margin: 0;
-    line-height: 0.4rem;
+    line-height: 1.8rem;
+}
+.des_border{
+    font-size: 1.2rem;
+    line-height: 1.8rem;
 }
 
 /*list*/
@@ -144,9 +88,9 @@ html,body,ul,li,p{
     width: 100%;
     .row{
         .rank{
-            height: 0.5rem;
-            line-height: 0.5rem;
-            font-size: 0.2rem;
+            height: 2.5rem;
+            line-height: 2.5rem;
+            font-size: 1.2rem;
             border-bottom:1px dashed #ccc;
             padding-left: 0.2rem;
         }
@@ -159,27 +103,42 @@ html,body,ul,li,p{
     }
 }
 /*Image & Text*/
+.left{
+    float: left;
+}
 .img_des_box{
-    margin-top: 0.2rem;
+    margin-top: 2.5rem;
+    overflow: hidden;
     .img_des{
-        width: 90%;
-        display: block;
-        margin-bottom: 0.5rem;
-        .img{
-            display: block;
-            width: 3rem;
-            padding-top:0.2rem; 
-        }
-        .des{
-            vertical-align: top;
-            padding-left: 0.5rem;
-            line-height: 0.35rem;
-            span{
+        margin: 0 0.4rem;
+        .des_li{
+            overflow: hidden;
+            margin-bottom: 4rem;
+            .num{
+                display: block;
+                float: left;
+                height: 1rem;
+                line-height: 1rem;
                 color: red;
-                font-size: 0.3rem;
-                margin-right:0.1rem; 
+                font-size: 1.5rem;
+                margin-right: 0.3rem;
+            }
+            .img{
+                width:13rem;
+                margin-right: 3rem;
+            }
+            .step_des{
+                width: 90%;
+                display: block;
+                font-size: 1.5rem;
+                margin: 0.4rem 0.3rem;
+                line-height: 1.8rem;
             }
         }
+
+
+
+        
     }
     tr:last-child{
         margin-bottom:0!important;

@@ -12,13 +12,15 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets
 from childrenrecipe.serializers import *
 from .models import *
+from datetime import datetime
+import time
 from .serializers import *
 from django.db.models import Q
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
-
+from rest_framework import views
 from rest_framework.response import Response
 from rest_framework.permissions import(
 	AllowAny,
@@ -34,6 +36,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from rest_framework.renderers import JSONRenderer
 from django.core.handlers.wsgi import WSGIRequest
+from .datatime import EPOCH
 # Create your views here.
 class JSONResponse(HttpResponse):
         """
@@ -54,7 +57,8 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class APIRootView(APIView):
     def get(self, request):
-        year = now().year
+#        year = now().year
+	year = datetime.now().year
         data = {
             'year-summary-url': reverse('year-summary', args=[year], request=request)
         }
@@ -122,104 +126,182 @@ def tags(request):
                         return Response(data, status=status.HTTP_200_OK)                       
         else:
                 return Response(data, status=status.HTTP_200_OK) 
+#@api_view(['POST'])
+#@permission_classes([AllowAny])
+#@csrf_exempt
+#def recipe(request):
+#	import time
+#        data = []
+#        ta = {}
+#        search = request.data.get('search',None)
+#        create_time = request.data.get('create_time', None)
+#	tags_ = request.data.get('tag_id',None)
+#	if tags_ is None:
+#        	tags = Tag.objects.filter(category__is_tag=1).order_by('seq')
+#	else:
+#		tags = Tag.objects.filter(id__in = tags_).order_by('seq')		
+#        for _ in tags:
+#       		if create_time is None:
+#			if search is None:
+#       				recipes = _.recipe_set.order_by('create_time')[:10]
+#			else:
+#				recipes = _.recipe_set.filter(name__contains = search).order_by('create_time')[:10]
+#		elif search is None:
+#       			createtime = time.localtime(int(create_time))
+#       			s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
+#       			recipes = _.recipe_set.filter(create_time__gt = s ).order_by('create_time')[:10]
+#		else:
+#			createtime = time.localtime(int(create_time))
+#                        s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
+#                        recipes = _.recipe_set.filter(name__contains = search).filter(create_time__gt = s ).order_by('create_time')[:10]
+#       		print recipes
+#       	        epoch = datetime.datetime(1970, 1, 1)+datetime.timedelta(hours=8)
+#       	        for recipe in recipes:
+#       	        	recipe_id = recipe.id
+#       	            	recipe_create_time = recipe.create_time
+#       	            	recipe_name = recipe.name
+#       	            	recipe_user = recipe.user
+#        	      	recipe_exihibitpic = recipe.exihibitpic
+#                        recipe_introduce = recipe.introduce
+#                        recipe_tips = recipe.tips
+#
+#       	                td = recipe_create_time - epoch
+#       	                timestamp_recipe_createtime = int(td.microseconds + (td.seconds + td.days * 24 * 3600))
+#
+#       	                tag_name = recipe.tag.filter(category__is_tag=1)[0].name
+#       	                tag_id = recipe.tag.filter(category__is_tag = 1 )[0].id
+#			tag_seq = recipe.tag.filter(category__is_tag = 1)[0].seq
+#			tag = None
+#                        if tag_name in ta:
+#                                tag = ta[tag_name]
+#                        else:
+#                                tag = {'tag':tag_name,'tag_id':tag_id, 'tag_seq':tag_seq,'recipes':[]}
+#                                ta[tag_name] = tag
+#                                data.append(tag)
+#                        tag['recipes'].append({
+#                               'id':recipe_id,
+#                               'url':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recipe_id),
+#                               'create_time':timestamp_recipe_createtime,
+#                               'recipe':recipe_name,
+#                               'user':recipe_user,
+#                               'tips':recipe_tips,
+#                               'exihibitpic':"http://"+request.META['HTTP_HOST']+recipe_exihibitpic.url,
+#                               'introduce':recipe_introduce,
+#                               'tag': [{"category_name": x.category.name, 'name': x.name}for x in recipe.tag.filter(category__is_tag = 4)]
+#			})
+#			data.sort(key=lambda x : x['tag_seq'])
+#	return Response(data, status=status.HTTP_200_OK)
+
+class RecipeResponseItem:
+    def __init__(self, recipe, host, create_time,
+                 tags):
+        self.recipe = recipe
+        self.host = host
+        self.create_time = create_time
+        self.tag = tags
+
+    def to_data(self):
+        recipe = self.recipe
+        _id = recipe.id
+        recipe_name = recipe.name
+        user = recipe.user
+        tips = recipe.tips
+        introduce = recipe.introduce
+        host = self.host
+        url = 'http://%s/api/recipes/%d' % (host, _id)
+        exihibitpic_url = recipe.exihibitpic
+        exihibitpic = 'http://%s/%s' % (host, exihibitpic_url)
+        exihibitpic = exihibitpic.decode('utf-8')
+        data = {
+            'id': _id,
+            'url': url,
+            'create_time': self.create_time,
+            'recipe': recipe_name,
+            'user': user,
+            'tips': tips,
+            'exihibitpic': exihibitpic,
+            'introduce': introduce,
+            'tag': self.tag
+        }
+        return data
+
+class AgeTagManage:
+    def __init__(self):
+        tag_query = Tag.objects.filter(category__is_tag = 1)
+        tags = tag_query.values_list('id', flat=True).all()
+        self.tag_age_ids = set(tags)
+
+    def check_age_query(self, tags):
+        check_id = set(tags) & self.tag_age_ids
+        return check_id
+
+    def rest_age_tags(self, tag):
+        return self.tag_age_ids - tag
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @csrf_exempt
 def recipe(request):
-	import time
-        data = []
-        ta = {}
-        #search = None
-        #create_time = None
-	#tags_ = None
-        search = request.data.get('search',None)
-        create_time = request.data.get('create_time', None)
-	tags_ = request.data.get('tag_id',None)
-	print tags_
-	if tags_ is None:
-        	tags = Tag.objects.filter(category__is_tag=1).order_by('seq')
-	else:
-		tags = Tag.objects.filter(id__in = tags_).order_by('seq')		
-	print tags
-        for _ in tags:
-       		if create_time is None:
-			if search is None:
-       				recipes = _.recipe_set.order_by('create_time')[:10]
-			else:
-				recipes = _.recipe_set.filter(name__contains = search).order_by('create_time')[:10]
-		elif search is None:
-       			createtime = time.localtime(int(create_time))
-       			s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
-       			recipes = _.recipe_set.filter(create_time__gt = s ).order_by('create_time')[:10]
-		else:
-			createtime = time.localtime(int(create_time))
-                        s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
-                        recipes = _.recipe_set.filter(name__contains = search).filter(create_time__gt = s ).order_by('create_time')[:10]
-       		print recipes
-       	        epoch = datetime.datetime(1970, 1, 1)+datetime.timedelta(hours=8)
-       	        for recipe in recipes:
-       	        	recipe_id = recipe.id
-       	            	recipe_create_time = recipe.create_time
-       	            	recipe_name = recipe.name
-       	            	recipe_user = recipe.user
-        	      	recipe_exihibitpic = recipe.exihibitpic
-                        recipe_introduce = recipe.introduce
-                        recipe_tips = recipe.tips
-
-       	                td = recipe_create_time - epoch
-       	                timestamp_recipe_createtime = int(td.microseconds + (td.seconds + td.days * 24 * 3600))
-
-       	                tag_name = recipe.tag.filter(category__is_tag= 1 )[0].name
-       	                tag_id = recipe.tag.filter(category__is_tag = 1 )[0].id
-			tag_seq = recipe.tag.filter(category__is_tag = 1)[0].seq
-			tag = None
-                        if tag_name in ta:
-                                tag = ta[tag_name]
-                        else:
-                                tag = {'tag':tag_name,'tag_id':tag_id, 'tag_seq':tag_seq,'recipes':[]}
-                                ta[tag_name] = tag
-                                data.append(tag)
-                        tag['recipes'].append({
-                               'id':recipe_id,
-                               'url':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recipe_id),
-                               'create_time':timestamp_recipe_createtime,
-                               'recipe':recipe_name,
-                               'user':recipe_user,
-                               'tips':recipe_tips,
-                               'exihibitpic':"http://"+request.META['HTTP_HOST']+recipe_exihibitpic.url,
-                               'introduce':recipe_introduce,
-                               'tag': [{"category_name": x.category.name, 'name': x.name}for x in recipe.tag.filter(category__is_tag = 4)]
-			})
-			data.sort(key=lambda x : x['tag_seq'])
-	return Response(data, status=status.HTTP_200_OK)
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-@csrf_exempt
-def reci(request):
-    import pdb
-    search = request.data.get('search',None)
+    data = []
+    ta = {}
+    search = request.data.get('search', None)
     create_time = request.data.get('create_time', None)
-    tags = request.data.get('tag_id',None)
-    print tags
-    def get_tag(tags=None):
-	pdb.set_trace()
-	if tags is not None:
-	    x= Tag.objects.filter(id__in = tags_)
-	    stage =  [x.id for x in age]
-   	    print stage
-	    print tags
-	    pdb.set_trace()
-	else:
-	   return Tag.objects.none()
-	print stage 
-    def get_recipe(tags_ = None,serach=None,create_time=None):
+    tags_ = request.data.get('tag_id', [])
+    host = request.META['HTTP_HOST']
 
-	pass
-    pdb.set_trace()
+    age_tag_manager = AgeTagManage()
+    age_tag_id = age_tag_manager.check_age_query(tags_)
 
-    return Response(status=status.HTTP_200_OK)
+    rest_query_tags = tags_
+    query = Recipe.objects
+    if age_tag_id:
+        assert len(age_tag_id) == 1 
+        rest_ages = age_tag_manager.rest_age_tags(age_tag_id)
+        age_tag_id_ls = list(age_tag_id)
+        query = query.filter(tag=age_tag_id_ls[0]).exclude(tag__in=rest_ages) 
+        rest_query_tags = set(tags_) - age_tag_id
+    for tag_id in rest_query_tags:
+        query = query.filter(tag=tag_id) 
+
+    if search:
+        query = query.filter(name__contains=search)
+    if create_time:
+        createtime = time.localtime(int(create_time))
+        s = time.strftime('%Y-%m-%d %H:%M:%S', createtime)
+        query = query.filter(create_time__gt=s)
+    recipes = query.order_by('create_time')[:10]
+
+    for recipe in recipes:
+        recipe_create_time = recipe.create_time
+
+        td = recipe_create_time - EPOCH
+        timestamp_recipe_createtime = int(td.microseconds + (td.seconds + td.days * 24 * 3600))
+
+        query_tag = recipe.tag.filter(category__is_tag=1)
+        tag_first = query_tag[0]
+
+        tag_name = tag_first.name
+        tag_id = tag_first.id
+        tag_seq = tag_first.seq
+
+        if tag_name in ta:
+            tag = ta[tag_name]
+        else:
+            tag = {'tag': tag_name, 'tag_id': tag_id, 'tag_seq': tag_seq, 'recipes': []}
+            ta[tag_name] = tag
+            data.append(tag)
+
+        _tags = [{"category_name": x.category.name, 'name': x.name}
+                    for x in recipe.tag.filter(category__is_tag=4)]
+        recipe_item = RecipeResponseItem(recipe=recipe,
+                                         host=host,
+                                         create_time=timestamp_recipe_createtime,
+                                         tags=_tags)
+        tag['recipes'].append(recipe_item.to_data())
+    data.sort(key=lambda x: x['tag_seq'])
+    return Response(data, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def tagshow(request):

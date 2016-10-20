@@ -4,24 +4,17 @@ var ReactDOM = require('react-dom');
 //容器
 var BoxWrap = React.createClass({
     render: function(){
-        return <div className='content_box'>
-                    <div className='small_title'>{this.props.title}</div>
+        return <div>
+                    <div className={'small_title border_box '+this.props.controller}>{this.props.title}</div>
                     <div>{this.props.children}</div>
                </div>
-    }
-});
-
-//大标题
-var HeadlineWrap = React.createClass({
-    render: function(){
-        return <div className='big_title'>{this.props.name}</div>
     }
 });
 
 //描述
 var DesWrap = React.createClass({
     render: function(){
-        return <BoxWrap title={this.props.title}>
+        return <BoxWrap controller={this.props.controller} title={this.props.title}>
                     <p className="des">{this.props.des}</p>
                </BoxWrap>
                 
@@ -31,9 +24,10 @@ var DesWrap = React.createClass({
 //图片
 var ImageWrap = React.createClass({
     render: function(){
-        return  <div className='content_box'>
-                   <HeadlineWrap name={this.props.reqData.name}/>
+        return  <div>
+                   <div className='big_title pc_controller'>{this.props.reqData.name}</div>
                    <img className="banner" src={this.props.reqData.exihibitpic} />
+                   <div className='big_title app_controller'>{this.props.reqData.name}</div>
                 </div>
     }
 });
@@ -47,7 +41,7 @@ var LabelWrap = React.createClass({
                 <div className="label" key={item.id}>{item.name}</div>
             )
         });
-        return <BoxWrap title={this.props.title}>
+        return <BoxWrap controller={this.props.controller} title={this.props.title}>
                     <div className="label_box">
                         {items}
                     </div>
@@ -62,8 +56,8 @@ var ListWrap = React.createClass({
         var items = this.props.data.map(function(item){
             return (
                 <tr className='row' key={item.id}>
-                    <td className='rank left'>{item.name}</td>
-                    <td className='rank right'>{item.portion}</td>
+                    <td className='rank'>{item.name}</td>
+                    <td className='rank'>{item.portion}</td>
                 </tr>
             );
         });
@@ -84,23 +78,32 @@ var StepWrap = React.createClass({
     render: function(){
         var items = this.props.data.map(function(item){
             return (
-                <li className="img_des" key={item.id}>
-                    <div><img className="img" src={item.image}/></div>
-                    <div className="des"><span>{item.seq}</span>{item.describe}</div>
+                <li className="des_li" key={item.id}>
+                    <div className='num app_controller'>{item.seq}</div>
+                    <div className="app_controller">
+                        <div><img  className="img" src={item.image} /></div>
+                        <p className='step_des'>{item.describe}</p>
+                    </div>
+                    <div className='pc_controller'>
+                        <div className='left'><img className="img" src={item.image}/></div>
+                        <div className="des"><span className='num'>{item.seq}</span>{item.describe}</div>
+                    </div>
+                    
                 </li>   
             )
         });
         return (
             <BoxWrap title={this.props.title}>
-                <ul className="img_des_box">
-					{items}
-			    </ul>
+                <div className="img_des_box">
+                    <ul className="img_des">
+                        {items}
+                    </ul>
+                </div>
             </BoxWrap>
         )
     }
 });
 
- 
 //ajax
 var GetData = React.createClass({
 
@@ -112,7 +115,6 @@ var GetData = React.createClass({
 			procedureList:[]
 		};
 	},
-
     componentDidMount: function(){
         $.ajax({
             url:this.props.source,
@@ -139,15 +141,16 @@ var GetData = React.createClass({
     render:function(){
         return (
 			<div>
-				<ImageWrap reqData={this.state.data}></ImageWrap>
-				<LabelWrap title='标签' data={this.state.tagList}></LabelWrap>
-				<DesWrap title='简介' des={this.state.data.introduce}></DesWrap>
+                <ImageWrap reqData={this.state.data}></ImageWrap>
+				<LabelWrap controller='pc_controller' title='标签' data={this.state.tagList}></LabelWrap>
+				<DesWrap controller='pc_controller' title='简介' des={this.state.data.introduce}></DesWrap>
 				<ListWrap title='用料' data={this.state.materialList}></ListWrap>
 				<StepWrap title='做法' data={this.state.procedureList}></StepWrap>
 				<DesWrap title='营养小贴士' des={this.state.data.tips}></DesWrap>
 			</div>
         )
     }
+    
 });
 
 //获取url参数
@@ -158,7 +161,9 @@ function getQueryString(name) {
 } 
 var id = getQueryString('state');
 
-var requestURL = "http://218.240.151.115:8081/api/recipes/"+id;
+//var requestURL = "http://caimiao.yijiayinong.com:8081/api/recipes/"+id;
+var requestURL = 'http://218.240.151.115:8080/api/recipes/'+id;
+//var requestURL = "http://localhost:1500/data.json";
 
 ReactDOM.render(
   <GetData source={requestURL}/>,
