@@ -261,7 +261,7 @@ def recipe(request):
         assert len(age_tag_id) == 1 
         rest_ages = age_tag_manager.rest_age_tags(age_tag_id)
         age_tag_id_ls = list(age_tag_id)
-        query = query.filter(tag=age_tag_id_ls[0]).exclude(tag__in=rest_ages) 
+        query = query.filter(tag=age_tag_id_ls[0])
         rest_query_tags = set(tags_) - age_tag_id
         querys = [query]
     else:
