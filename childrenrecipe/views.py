@@ -321,7 +321,7 @@ def recipe(request):
             td = recipe_create_time - EPOCH
             timestamp_recipe_createtime = int(td.microseconds + (td.seconds + td.days * 24 * 3600))
 
-            _tags = [{"category_name": x.category.name, 'name': x.name}
+            _tags = [{'name': x.name}
                         for x in recipe.tag.filter(category__is_tag=4)]
             recipe_item = RecipeResponseItem(recipe=recipe,
                                              host=host,
