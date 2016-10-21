@@ -245,13 +245,21 @@ class AgeQuery:
         self.query = query
         self.age_tag_id = age_tag_id
 
+class RecipeDuplicationManager:
+    def __init__(self):
+        self.recipes = set()
+
+    def check(self, recipe):
+        if recipe in self.recipes:
+            return True
+        self.recipes.add(recipe)
+        return False
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @csrf_exempt
 def recipe(request):
     data = []
-    ta = {}
     search = request.data.get('search', None)
     create_time = request.data.get('create_time', None)
     tags_ = request.data.get('tag_id', [])
@@ -265,7 +273,6 @@ def recipe(request):
     if age_tag_id:
         query = Recipe.objects
         assert len(age_tag_id) == 1 
-        rest_ages = age_tag_manager.rest_age_tags(age_tag_id)
         age_tag_id_ls = list(age_tag_id)
         age_id = age_tag_id_ls[0]
         query = query.filter(tag=age_tag_id_ls[0]) 
@@ -278,6 +285,7 @@ def recipe(request):
             query = query.filter(tag=_age_tag_id)
             querys.append(AgeQuery(query, _age_tag_id))
 
+    # cache
     q = Q()
     for tag_id in rest_query_tags:
         q = q | Q(tag=tag_id)
@@ -286,6 +294,8 @@ def recipe(request):
         createtime = time.localtime(int(create_time))
         s = time.strftime('%Y-%m-%d %H:%M:%S', createtime)
 
+    recipe_duplication_manager = RecipeDuplicationManager()
+
     for age_query in querys:
         query = age_query.query
         age_tag_id = age_query.age_tag_id
@@ -293,8 +303,8 @@ def recipe(request):
         if search:
             query = query.filter(name__contains=search)
         if s:
-            query = query.filter(create_time__lt=s)
-        recipes = query.order_by('-create_time')[:10]
+            query = query.filter(create_time__gt=s)
+        recipes = query.order_by('create_time')[:10]
 
         query_tag = Tag.objects.filter(id=age_tag_id)
         tag_first = query_tag[0]
@@ -305,6 +315,9 @@ def recipe(request):
         tag = {'tag': tag_name, 'tag_id': tag_id, 'tag_seq': tag_seq, 'recipes': []}
         _recipes = []
         for recipe in recipes:
+            if recipe_duplication_manager.check(recipe):
+                continue
+
             recipe_create_time = recipe.create_time
 
             td = recipe_create_time - EPOCH
@@ -317,7 +330,7 @@ def recipe(request):
                                              create_time=timestamp_recipe_createtime,
                                              tags=_tags)
             _recipes.append(recipe_item.to_data())
-        if recipes:
+        if _recipes:
             tag['recipes'] = _recipes
             data.append(tag)
     data.sort(key=lambda x: x['tag_seq'])
@@ -351,9 +364,7 @@ def tagshow(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def recommend(request):
-        #import pdb
-        #pdb.set_trace()
-
+  
         now = datetime.datetime.now()
         epoch = datetime.datetime(1970, 1, 1)+datetime.timedelta(hours=8)
 
