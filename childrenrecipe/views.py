@@ -12,7 +12,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets
 from childrenrecipe.serializers import *
 from .models import *
-#from datetime import datetime
 import time
 from .serializers import *
 from django.db.models import Q
@@ -285,7 +284,6 @@ def recipe(request):
             query = query.filter(tag=_age_tag_id)
             querys.append(AgeQuery(query, _age_tag_id))
 
-    # cache
     q = Q()
     for tag_id in rest_query_tags:
         q = q | Q(tag=tag_id)
@@ -303,8 +301,8 @@ def recipe(request):
         if search:
             query = query.filter(name__contains=search)
         if s:
-            query = query.filter(create_time__gt=s)
-        recipes = query.order_by('create_time')[:10]
+            query = query.filter(create_time__lt=s)
+        recipes = query.order_by('-create_time')[:10]
 
         query_tag = Tag.objects.filter(id=age_tag_id)
         tag_first = query_tag[0]
