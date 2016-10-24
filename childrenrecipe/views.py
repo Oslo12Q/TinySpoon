@@ -244,15 +244,29 @@ class AgeQuery:
         self.query = query
         self.age_tag_id = age_tag_id
 
+
+#class RecipeDuplicationManager:
+#    def __init__(self):
+#        self.recipes = set()
+#
+#    def check(self, recipe):
+#        if recipe in self.recipes:
+#            return True
+#        self.recipes.add(recipe)
+#        return False
+
 class RecipeDuplicationManager:
+   
     def __init__(self):
         self.recipes = set()
 
     def check(self, recipe):
+        return False
         if recipe in self.recipes:
             return True
         self.recipes.add(recipe)
         return False
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -271,19 +285,20 @@ def recipe(request):
 
     if age_tag_id:
         query = Recipe.objects
-        assert len(age_tag_id) == 1 
+        assert len(age_tag_id) == 1 #only one age id
         age_tag_id_ls = list(age_tag_id)
         age_id = age_tag_id_ls[0]
-        query = query.filter(tag=age_tag_id_ls[0]) 
+        query = query.filter(tag=age_tag_id_ls[0]) #age filter
         rest_query_tags = set(tags_) - age_tag_id
         querys = [AgeQuery(query, age_id)]
     else:
         querys = []
-        for _age_tag_id in age_tag_manager.tag_age_ids: 
+        for _age_tag_id in age_tag_manager.tag_age_ids: # quanbu age
             query = Recipe.objects
             query = query.filter(tag=_age_tag_id)
             querys.append(AgeQuery(query, _age_tag_id))
 
+    # cache
     q = Q()
     for tag_id in rest_query_tags:
         q = q | Q(tag=tag_id)
@@ -297,7 +312,7 @@ def recipe(request):
     for age_query in querys:
         query = age_query.query
         age_tag_id = age_query.age_tag_id
-        query = query.filter(q)  
+        query = query.filter(q)  # tag and query
         if search:
             query = query.filter(name__contains=search)
         if s:
@@ -321,8 +336,8 @@ def recipe(request):
             td = recipe_create_time - EPOCH
             timestamp_recipe_createtime = int(td.microseconds + (td.seconds + td.days * 24 * 3600))
 
-            _tags = [{'name': x.name}
-                        for x in recipe.tag.filter(category__is_tag=4)]
+            _tags = [{"category_name": x.category.name, 'name': x.name}
+                        for x in recipe.tag.filter(category__is_tag=3)]
             recipe_item = RecipeResponseItem(recipe=recipe,
                                              host=host,
                                              create_time=timestamp_recipe_createtime,
