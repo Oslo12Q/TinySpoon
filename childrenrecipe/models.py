@@ -13,7 +13,7 @@ class Recipe(models.Model):
 	introduce = models.TextField(blank=False)
 	tips = models.TextField(blank=True)
 	tag = models.ManyToManyField('Tag')
-#	browse = models.IntegerField(blank=False)	
+	browse = models.IntegerField(blank=False)	
 	def __unicode__(self):
 		return self.name
 

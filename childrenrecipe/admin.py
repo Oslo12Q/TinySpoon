@@ -19,6 +19,8 @@ class RecipeAdmin(admin.ModelAdmin):
 	]
 	list_display = ('id', 'name')
 
+#class RecAdmin(admin.ModelAdmin):
+#	search_fields = ('name')
 #admin.site.register(Student)
 #admin.site.register(Classes)
 admin.site.register(Recipe, RecipeAdmin)

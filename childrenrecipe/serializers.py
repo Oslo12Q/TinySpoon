@@ -79,7 +79,7 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
 
 	class Meta:
                 model = Recipe
-                fields = ('url','id','name','user','exihibitpic','introduce','tag','tips',
+                fields = ('url','id','name','user','exihibitpic','introduce','tag','tips','browse',
                         'material','procedure','width','height','share_url'
                         )
 

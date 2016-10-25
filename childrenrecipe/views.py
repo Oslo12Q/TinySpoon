@@ -67,7 +67,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 	queryset = Recipe.objects.all()
 	serializer_class = RecipeSerializer
 	ordering =('-create_time')
-
+	search_fields = ('recipe__name')
 
 class CategoryViewSet(viewsets.ModelViewSet):
 	queryset = Category.objects.all()
@@ -206,6 +206,9 @@ class RecipeResponseItem:
         user = recipe.user
         tips = recipe.tips
         introduce = recipe.introduce
+	#浏览数量
+	browse = recipe.browse	
+
         host = self.host
         url = 'http://%s/api/recipes/%d' % (host, _id)
         exihibitpic_url = recipe.exihibitpic
@@ -218,13 +221,16 @@ class RecipeResponseItem:
             'recipe': recipe_name,
             'user': user,
             'tips': tips,
+	    #浏览数量
+	    'browse':browse,
+
             'exihibitpic': exihibitpic,
             'introduce': introduce,
             'tag': self.tag
         }
         return data
 
-
+#管理年龄tag
 class AgeTagManage:
     def __init__(self):
         tag_query = Tag.objects.filter(category__is_tag=1)
@@ -244,19 +250,8 @@ class AgeQuery:
         self.query = query
         self.age_tag_id = age_tag_id
 
-
-#class RecipeDuplicationManager:
-#    def __init__(self):
-#        self.recipes = set()
-#
-#    def check(self, recipe):
-#        if recipe in self.recipes:
-#            return True
-#        self.recipes.add(recipe)
-#        return False
-
 class RecipeDuplicationManager:
-   
+    #筛选结果
     def __init__(self):
         self.recipes = set()
 
@@ -412,14 +407,15 @@ def recommend(request):
                 
                 recommend = {'recommend_recipe': 'Today\'s Specials', 'create_time': timestamp_createtime,
                         'pubdate': timestamp_pubdate, 'image': request.build_absolute_uri(recommend_image), 
-                        'name': recommend_name, 'introduce': recommend_introduce, 'recipe': {}}
+                        'name': recommend_name,  'recipe': {}}
                 
                 recommend['recipe'] = {
                         'id': recommend_recipe_id,
                         'create_time': timestamp_recipe_createtime,
                         'name': recommend_recipe_name,
                         'user': recommend_recipe_user,
-                        'introduce': recommend_recipe_introduce,
+                        'introduce':recommend_introduce,
+			#recommend_recipe_introduce,
                         'url': "http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recommend_recipe_id)      
                 }
                 return Response(recommend, status=status.HTTP_200_OK)
