@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'childrenrecipe',
+#    'xadmin',
 ]
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (

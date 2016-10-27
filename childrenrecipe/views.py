@@ -124,73 +124,9 @@ def tags(request):
                 else:
                         return Response(data, status=status.HTTP_200_OK)                       
         else:
-                return Response(data, status=status.HTTP_200_OK) 
-#@api_view(['POST'])
-#@permission_classes([AllowAny])
-#@csrf_exempt
-#def recipe(request):
-#	import time
-#        data = []
-#        ta = {}
-#        search = request.data.get('search',None)
-#        create_time = request.data.get('create_time', None)
-#	tags_ = request.data.get('tag_id',None)
-#	if tags_ is None:
-#        	tags = Tag.objects.filter(category__is_tag=1).order_by('seq')
-#	else:
-#		tags = Tag.objects.filter(id__in = tags_).order_by('seq')		
-#        for _ in tags:
-#       		if create_time is None:
-#			if search is None:
-#       				recipes = _.recipe_set.order_by('create_time')[:10]
-#			else:
-#				recipes = _.recipe_set.filter(name__contains = search).order_by('create_time')[:10]
-#		elif search is None:
-#       			createtime = time.localtime(int(create_time))
-#       			s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
-#       			recipes = _.recipe_set.filter(create_time__gt = s ).order_by('create_time')[:10]
-#		else:
-#			createtime = time.localtime(int(create_time))
-#                        s = time.strftime('%Y-%m-%d %H:%M:%S',createtime)
-#                        recipes = _.recipe_set.filter(name__contains = search).filter(create_time__gt = s ).order_by('create_time')[:10]
-#       		print recipes
-#       	        epoch = datetime.datetime(1970, 1, 1)+datetime.timedelta(hours=8)
-#       	        for recipe in recipes:
-#       	        	recipe_id = recipe.id
-#       	            	recipe_create_time = recipe.create_time
-#       	            	recipe_name = recipe.name
-#       	            	recipe_user = recipe.user
-#        	      	recipe_exihibitpic = recipe.exihibitpic
-#                        recipe_introduce = recipe.introduce
-#                        recipe_tips = recipe.tips
-#
-#       	                td = recipe_create_time - epoch
-#       	                timestamp_recipe_createtime = int(td.microseconds + (td.seconds + td.days * 24 * 3600))
-#
-#       	                tag_name = recipe.tag.filter(category__is_tag=1)[0].name
-#       	                tag_id = recipe.tag.filter(category__is_tag = 1 )[0].id
-#			tag_seq = recipe.tag.filter(category__is_tag = 1)[0].seq
-#			tag = None
-#                        if tag_name in ta:
-#                                tag = ta[tag_name]
-#                        else:
-#                                tag = {'tag':tag_name,'tag_id':tag_id, 'tag_seq':tag_seq,'recipes':[]}
-#                                ta[tag_name] = tag
-#                                data.append(tag)
-#                        tag['recipes'].append({
-#                               'id':recipe_id,
-#                               'url':"http://"+request.META['HTTP_HOST']+'/'+'api'+'/'+'recipes'+'/'+str(recipe_id),
-#                               'create_time':timestamp_recipe_createtime,
-#                               'recipe':recipe_name,
-#                               'user':recipe_user,
-#                               'tips':recipe_tips,
-#                               'exihibitpic':"http://"+request.META['HTTP_HOST']+recipe_exihibitpic.url,
-#                               'introduce':recipe_introduce,
-#                               'tag': [{"category_name": x.category.name, 'name': x.name}for x in recipe.tag.filter(category__is_tag = 4)]
-#			})
-#			data.sort(key=lambda x : x['tag_seq'])
-#	return Response(data, status=status.HTTP_200_OK)
+                return Response(data, status=status.HTTP_200_OK)
 
+ 
 class RecipeResponseItem:
     def __init__(self, recipe, host, create_time,
                  tags):
@@ -343,6 +279,21 @@ def recipe(request):
             data.append(tag)
     data.sort(key=lambda x: x['tag_seq'])
     return Response(data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def recipes(request):
+    data = []
+    id = request.GET.get('id',None)
+    print id
+    if id:
+	recipe = Recipe.objects.filter(id = id)
+	print recipe
+	for _ in recipe:
+		_.browse = _.browse + 1
+		_.save()
+	return Response(status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])

@@ -18,16 +18,24 @@ class RecipeAdmin(admin.ModelAdmin):
 		ProcedureInline,
 	]
 	list_display = ('id', 'name')
+	search_fields = ['name']
 
-#class RecAdmin(admin.ModelAdmin):
-#	search_fields = ('name')
-#admin.site.register(Student)
-#admin.site.register(Classes)
+class MaterialAdmin(admin.ModelAdmin):
+	list_display = ('id','name')
+	search_fields = ['name']
+
+class ProcedureAdmin(admin.ModelAdmin):
+        search_fields = ['name']
+
+class RecommendAdmin(admin.ModelAdmin):
+	raw_id_fields = ('recipe',)
+	
+
 admin.site.register(Recipe, RecipeAdmin)
-admin.site.register(Material)
-admin.site.register(Procedure)
+admin.site.register(Material,MaterialAdmin)
+admin.site.register(Procedure,ProcedureAdmin)
 admin.site.register(Tag)
 admin.site.register(Category)
-admin.site.register(Recommend)
+admin.site.register(Recommend,RecommendAdmin)
 
 
