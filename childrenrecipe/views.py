@@ -290,8 +290,8 @@ def recipes(request):
 	recipe = Recipe.objects.filter(id = id)
 	print recipe
 	for _ in recipe:
-		_.browse = _.browse + 1
-		_.save()
+	    _.browse = _.browse + 1
+	    _.save()
 	return Response(status=status.HTTP_200_OK)
 
 
