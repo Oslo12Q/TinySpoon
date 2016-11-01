@@ -142,9 +142,6 @@ class RecipeResponseItem:
         user = recipe.user
         tips = recipe.tips
         introduce = recipe.introduce
-	#浏览数量
-	browse = recipe.browse	
-
         host = self.host
         url = 'http://%s/api/recipes/%d' % (host, _id)
         exihibitpic_url = recipe.exihibitpic
@@ -157,17 +154,17 @@ class RecipeResponseItem:
             'recipe': recipe_name,
             'user': user,
             'tips': tips,
-	    #浏览数量
-	    'browse':browse,
-
             'exihibitpic': exihibitpic,
             'introduce': introduce,
             'tag': self.tag
         }
         return data
 
-#管理年龄tag
+
 class AgeTagManage:
+    '''
+    管理年龄tag
+    '''
     def __init__(self):
         tag_query = Tag.objects.filter(category__is_tag=1)
         tags = tag_query.values_list('id', flat=True).all()
@@ -186,23 +183,23 @@ class AgeQuery:
         self.query = query
         self.age_tag_id = age_tag_id
 
+
 class RecipeDuplicationManager:
-    #筛选结果
+    '''
+    删选结果
+    '''
     def __init__(self):
         self.recipes = set()
 
-    def check(self, recipe):
-        return False
-        if recipe in self.recipes:
-            return True
-        self.recipes.add(recipe)
-        return False
+    def add(self, recipe):
+        self.recipes.add(recipe.id)
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @csrf_exempt
 def recipe(request):
+   
     data = []
     search = request.data.get('search', None)
     create_time = request.data.get('create_time', None)
@@ -214,6 +211,8 @@ def recipe(request):
 
     rest_query_tags = tags_
 
+    filter_dump_recipe = bool(tags_) 
+
     if age_tag_id:
         query = Recipe.objects
         assert len(age_tag_id) == 1 #only one age id
@@ -224,7 +223,7 @@ def recipe(request):
         querys = [AgeQuery(query, age_id)]
     else:
         querys = []
-        for _age_tag_id in age_tag_manager.tag_age_ids: # quanbu age
+        for _age_tag_id in age_tag_manager.tag_age_ids: #quanbu age 
             query = Recipe.objects
             query = query.filter(tag=_age_tag_id)
             querys.append(AgeQuery(query, _age_tag_id))
@@ -248,7 +247,11 @@ def recipe(request):
             query = query.filter(name__contains=search)
         if s:
             query = query.filter(create_time__lt=s)
-        recipes = query.order_by('-create_time')[:10]
+        filter_recipes = list(recipe_duplication_manager.recipes)
+        if filter_dump_recipe and filter_recipes:
+            query = query.exclude(id__in=filter_recipes)
+
+        recipes = query.order_by('-create_time').distinct()[:10]
 
         query_tag = Tag.objects.filter(id=age_tag_id)
         tag_first = query_tag[0]
@@ -259,9 +262,7 @@ def recipe(request):
         tag = {'tag': tag_name, 'tag_id': tag_id, 'tag_seq': tag_seq, 'recipes': []}
         _recipes = []
         for recipe in recipes:
-            if recipe_duplication_manager.check(recipe):
-                continue
-
+            recipe_duplication_manager.add(recipe)
             recipe_create_time = recipe.create_time
 
             td = recipe_create_time - EPOCH
@@ -279,6 +280,7 @@ def recipe(request):
             data.append(tag)
     data.sort(key=lambda x: x['tag_seq'])
     return Response(data, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
